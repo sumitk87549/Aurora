@@ -9,11 +9,16 @@
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/CartController.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/HelloWorldController.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/OrderController.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/UserController.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/WebhookController.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/WishlistController.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/AuthRequest.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/AuthResponse.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/CheckoutRequest.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/DashboardStats.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/RazorpayOrderResponse.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/RegisterRequest.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/UserProfileUpdateRequest.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/entity/Candle.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/entity/CandleImage.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/entity/Cart.java
@@ -35,6 +40,8 @@
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/AuthService.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/CandleService.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/CartService.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/EmailService.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/OrderService.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/PaymentService.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/UserDetailsServiceImpl.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/WishlistService.java

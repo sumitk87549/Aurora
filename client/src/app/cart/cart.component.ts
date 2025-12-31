@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { CartService, Cart } from '../services/cart.service';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, SlicePipe } from '@angular/common';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, SlicePipe]
 })
 export class CartComponent implements OnInit {
   cart: Cart | null = null;
   isLoading: boolean = true;
   errorMessage: string = '';
 
-  constructor(private cartService: CartService, private router: Router) {}
+  constructor(private cartService: CartService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadCart();
@@ -77,7 +77,7 @@ export class CartComponent implements OnInit {
 
   getTotalPrice(): number {
     if (!this.cart) return 0;
-    return this.cart.cartItems.reduce((total, item) => 
+    return this.cart.cartItems.reduce((total, item) =>
       total + (item.priceAtTime * item.quantity), 0);
   }
 

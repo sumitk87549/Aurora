@@ -1,25 +1,72 @@
 <main class="main-content">
-  <section class="hero">
-    <div class="hero-content">
-      <h2>Welcome to Aurora Flames</h2>
-      <p>Discover our premium collection of handcrafted candles</p>
-      <button class="cta-button" (click)="navigateToCandles()">Explore Candles</button>
+  <!-- Hero Section -->
+  <section class="hero animate-fade-in">
+    <div class="hero-bg">
+      <div class="glow-effect"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-subtitle animate-slide-down">Handcrafted Luxury</span>
+        <h1 class="hero-title animate-slide-up">Illuminating Artistry<br>For Your Soul</h1>
+        <p class="hero-description animate-slide-up" style="animation-delay: 0.1s">
+          Discover our exclusive collection of artisanal candles, crafted with sustainable soy wax and premium essential
+          oils to transform your space.
+        </p>
+        <div class="hero-actions animate-slide-up" style="animation-delay: 0.2s">
+          <button class="btn btn-primary btn-lg" (click)="navigateToCandles()">Shop Collection</button>
+          <button class="btn btn-secondary btn-lg" [routerLink]="['/about']">Our Story</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Elements for Aesthetics -->
+    <div class="floating-element float-1">✨</div>
+    <div class="floating-element float-2">🕯️</div>
+    <div class="floating-element float-3">🌿</div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="section features">
+    <div class="container">
+      <div class="section-header text-center mb-4">
+        <h2>Why Choose Aurora</h2>
+        <p>Crafted with intention, designed for serenity</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="feature-card">
+          <div class="feature-icon">🌿</div>
+          <h3>100% Natural Soy Wax</h3>
+          <p>Eco-friendly, biodegradable, and burns cleaner than paraffin.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">✨</div>
+          <h3>Premium Fragrances</h3>
+          <p>Curated blends of essential oils that soothe and uplift your mood.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🖐️</div>
+          <h3>Hand Poured</h3>
+          <p>Every candle is crafted by hand in small batches for quality.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="features">
-    <div class="feature-grid">
-      <div class="feature-card">
-        <h3>Premium Quality</h3>
-        <p>Handcrafted with the finest ingredients</p>
-      </div>
-      <div class="feature-card">
-        <h3>Natural Scents</h3>
-        <p>Essential oils and natural fragrances</p>
-      </div>
-      <div class="feature-card">
-        <h3>Eco-Friendly</h3>
-        <p>Sustainable and environmentally conscious</p>
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-card">
+        <div class="cta-content">
+          <h2>Create Your Sanctuary</h2>
+          <p>Join our community and get exclusive access to new scents and limited editions.</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Enter your email address" class="newsletter-input">
+            <button class="btn btn-primary">Subscribe</button>
+          </div>
+        </div>
       </div>
     </div>
   </section>

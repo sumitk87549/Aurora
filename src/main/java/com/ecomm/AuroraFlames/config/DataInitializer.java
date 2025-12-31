@@ -98,7 +98,8 @@ public class DataInitializer implements CommandLineRunner {
             image3.setCandle(savedCandle3);
             image3.setImageName("rose-garden.jpg");
             image3.setContentType("image/jpeg");
-            image3.setImageUrl("/uploads/candles/rose-garden.jpg");
+            image3.setImageUrl("stored_in_db");
+            image3.setImageData(new byte[] {}); // Empty placeholder
             candleImageRepository.save(image3);
         }
     }

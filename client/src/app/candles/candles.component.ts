@@ -80,12 +80,8 @@ export class CandlesComponent implements OnInit {
   
   getImageUrl(image?: CandleImage): string {
     if (!image || !image.id) {
-      return '/assets/default-candle.svg';
+      return '/assets/default-candle.jpg';
     }
     return `http://localhost:8081/api/candles/images/${image.id}`;
-  }
-
-  onImageError(event: any): void {
-    event.target.src = '/assets/default-candle.svg';
   }
 }

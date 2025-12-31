@@ -1,55 +1,113 @@
-<div class="cart-container">
-  <h1>Shopping Cart</h1>
+<div class="main-content">
+  <div class="container animate-fade-in">
+    <div class="cart-header">
+      <h1>Shopping Trolley</h1>
+      <p *ngIf="cart && cart.cartItems.length > 0">{{ getTotalItems() }} items in your cart</p>
+    </div>
 
-  <div class="loading-spinner" *ngIf="isLoading">
-    <p>Loading cart...</p>
-  </div>
-
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
-  </div>
-
-  <div class="cart-content" *ngIf="!isLoading && !errorMessage">
-    <div class="cart-items" *ngIf="cart && cart.cartItems.length > 0">
-      <div class="cart-item" *ngFor="let item of cart.cartItems">
-        <div class="item-info">
-          <h3>{{ item.candle.name }}</h3>
-          <p class="item-description">{{ item.candle.description }}</p>
-          <p class="item-price">₹{{ item.priceAtTime }} each</p>
-        </div>
-        
-        <div class="item-quantity">
-          <button class="quantity-btn" (click)="updateQuantity(item.id, item.quantity - 1)">-</button>
-          <span class="quantity">{{ item.quantity }}</span>
-          <button class="quantity-btn" (click)="updateQuantity(item.id, item.quantity + 1)">+</button>
-        </div>
-        
-        <div class="item-total">
-          <p>₹{{ item.priceAtTime * item.quantity }}</p>
-          <button class="remove-btn" (click)="removeItem(item.id)">Remove</button>
-        </div>
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="skeleton-list">
+        <div class="skeleton-header skeleton"></div>
+        <div class="skeleton-row skeleton" *ngFor="let i of [1,2,3]"></div>
       </div>
     </div>
 
-    <div class="empty-cart" *ngIf="cart && cart.cartItems.length === 0">
-      <h2>Your cart is empty</h2>
-      <p>Add some candles to get started!</p>
-      <button class="btn btn-primary" routerLink="/candles">Continue Shopping</button>
+    <!-- Error State -->
+    <div class="error-state" *ngIf="errorMessage">
+      <div class="error-content">
+        <div class="error-icon">⚠️</div>
+        <h3>Something went wrong</h3>
+        <p>{{ errorMessage }}</p>
+        <button class="btn btn-primary" (click)="loadCart()">Try Again</button>
+      </div>
     </div>
 
-    <div class="cart-summary" *ngIf="cart && cart.cartItems.length > 0">
-      <div class="summary-row">
-        <span>Total Items:</span>
-        <span>{{ getTotalItems() }}</span>
+    <div class="cart-layout" *ngIf="!isLoading && !errorMessage">
+      <!-- Cart Items List -->
+      <div class="cart-main animate-slide-up">
+
+        <div class="empty-cart" *ngIf="cart && cart.cartItems.length === 0">
+          <div class="empty-icon">🛒</div>
+          <h2>Your cart is empty</h2>
+          <p>Looks like you haven't added any premium scents yet.</p>
+          <button class="btn btn-primary" routerLink="/candles">Start Shopping</button>
+        </div>
+
+        <div class="cart-items" *ngIf="cart && cart.cartItems.length > 0">
+          <div class="cart-item" *ngFor="let item of cart.cartItems">
+            <div class="item-image">
+              <!-- Placeholder or actual image if available in CartItem model -->
+              <div class="placeholder-img" [title]="item.candle.name">🕯️</div>
+            </div>
+
+            <div class="item-details">
+              <h3>{{ item.candle.name }}</h3>
+              <p class="subtitle">{{ item.candle.description | slice:0:50 }}...</p>
+              <button class="btn-text remove-btn" (click)="removeItem(item.id)">Remove</button>
+            </div>
+
+            <div class="item-controls">
+              <div class="quantity-selector">
+                <button class="qty-btn" (click)="updateQuantity(item.id, item.quantity - 1)"
+                  [disabled]="item.quantity <= 1">−</button>
+                <span class="qty-num">{{ item.quantity }}</span>
+                <button class="qty-btn" (click)="updateQuantity(item.id, item.quantity + 1)">+</button>
+              </div>
+              <div class="item-price">
+                ₹{{ item.priceAtTime * item.quantity | number }}
+              </div>
+            </div>
+          </div>
+
+          <div class="cart-actions-row">
+            <button class="btn btn-secondary btn-sm" (click)="clearCart()">Clear Cart</button>
+          </div>
+        </div>
       </div>
-      <div class="summary-row total">
-        <span>Total Price:</span>
-        <span>₹{{ getTotalPrice() }}</span>
-      </div>
-      
-      <div class="cart-actions">
-        <button class="btn btn-secondary" (click)="clearCart()">Clear Cart</button>
-        <button class="btn btn-primary" (click)="proceedToCheckout()">Proceed to Checkout</button>
+
+      <!-- Order Summary -->
+      <div class="cart-sidebar animate-slide-up" style="animation-delay: 0.1s"
+        *ngIf="cart && cart.cartItems.length > 0">
+        <div class="summary-card">
+          <h3>Order Summary</h3>
+
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>₹{{ getTotalPrice() | number }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span>{{ getTotalPrice() >= 999 ? 'Free' : '₹99' }}</span>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-row total">
+            <span>Total</span>
+            <span>₹{{ (getTotalPrice() + (getTotalPrice() >= 999 ? 0 : 99)) | number }}</span>
+          </div>
+
+          <div class="shipping-progress" *ngIf="getTotalPrice() < 999">
+            <p>Add <strong>₹{{ 999 - getTotalPrice() }}</strong> more for Free Shipping</p>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="(getTotalPrice() / 999) * 100"></div>
+            </div>
+          </div>
+
+          <div class="shipping-success" *ngIf="getTotalPrice() >= 999">
+            <span class="success-icon">✨</span> You've unlocked Free Shipping!
+          </div>
+
+          <button class="btn btn-primary btn-block checkout-btn" (click)="proceedToCheckout()">
+            Proceed to Checkout
+          </button>
+
+          <div class="secure-checkout">
+            <span>🔒 Secure Checkout</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

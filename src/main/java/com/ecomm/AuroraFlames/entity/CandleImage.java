@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "candle_images")
@@ -21,6 +23,10 @@ public class CandleImage {
 
     @Column(name = "image_url", nullable = true)
     private String imageUrl;
+
+    @Column(nullable = true)
+    @JdbcTypeCode(SqlTypes.BLOB)
+    private byte[] imageData;
 
     @Column(nullable = true)
     private String contentType;
