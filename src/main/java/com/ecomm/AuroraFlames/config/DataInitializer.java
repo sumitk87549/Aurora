@@ -57,12 +57,14 @@ public class DataInitializer implements CommandLineRunner {
             candle1.setStockQuantity(50);
             candle1.setAvailable(true);
             candle1.setImages(new ArrayList<>());
-            
+
             Candle savedCandle1 = candleRepository.save(candle1);
-            
+
             CandleImage image1 = new CandleImage();
             image1.setCandle(savedCandle1);
-            image1.setImageUrl("/uploads/lavender-dreams.jpg");
+            image1.setImageName("lavender-dreams.jpg");
+            image1.setContentType("image/jpeg");
+            image1.setImageUrl("/uploads/candles/lavender-dreams.jpg");
             candleImageRepository.save(image1);
 
             Candle candle2 = new Candle();
@@ -72,12 +74,14 @@ public class DataInitializer implements CommandLineRunner {
             candle2.setStockQuantity(30);
             candle2.setAvailable(true);
             candle2.setImages(new ArrayList<>());
-            
+
             Candle savedCandle2 = candleRepository.save(candle2);
-            
+
             CandleImage image2 = new CandleImage();
             image2.setCandle(savedCandle2);
-            image2.setImageUrl("/uploads/vanilla-bliss.jpg");
+            image2.setImageName("vanilla-bliss.jpg");
+            image2.setContentType("image/jpeg");
+            image2.setImageUrl("/uploads/candles/vanilla-bliss.jpg");
             candleImageRepository.save(image2);
 
             Candle candle3 = new Candle();
@@ -87,12 +91,14 @@ public class DataInitializer implements CommandLineRunner {
             candle3.setStockQuantity(25);
             candle3.setAvailable(true);
             candle3.setImages(new ArrayList<>());
-            
+
             Candle savedCandle3 = candleRepository.save(candle3);
-            
+
             CandleImage image3 = new CandleImage();
             image3.setCandle(savedCandle3);
-            image3.setImageUrl("/uploads/rose-garden.jpg");
+            image3.setImageName("rose-garden.jpg");
+            image3.setContentType("image/jpeg");
+            image3.setImageUrl("/uploads/candles/rose-garden.jpg");
             candleImageRepository.save(image3);
         }
     }

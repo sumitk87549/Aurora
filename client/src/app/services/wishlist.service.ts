@@ -27,7 +27,7 @@ export interface Wishlist {
   providedIn: 'root'
 })
 export class WishlistService {
-  private apiUrl = 'http://localhost:8080/api/wishlist';
+  private apiUrl = 'http://localhost:8081/api/wishlist';
 
   constructor(private http: HttpClient) { }
 

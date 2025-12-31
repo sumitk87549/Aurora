@@ -1,5 +1,6 @@
 package com.ecomm.AuroraFlames.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,11 +15,18 @@ public class CandleImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(nullable = false)
+
+    @Column(nullable = true)
+    private String imageName;
+
+    @Column(name = "image_url", nullable = true)
     private String imageUrl;
-    
+
+    @Column(nullable = true)
+    private String contentType;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "candle_id")
+    @JsonIgnoreProperties({ "images", "cartItems", "wishlistItems", "orderItems" })
     private Candle candle;
 }

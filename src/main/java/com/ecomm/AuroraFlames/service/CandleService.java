@@ -1,7 +1,9 @@
 package com.ecomm.AuroraFlames.service;
 
 import com.ecomm.AuroraFlames.entity.Candle;
+import com.ecomm.AuroraFlames.entity.CandleImage;
 import com.ecomm.AuroraFlames.repository.CandleRepository;
+import com.ecomm.AuroraFlames.repository.CandleImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,9 @@ public class CandleService {
 
     @Autowired
     private CandleRepository candleRepository;
+    
+    @Autowired
+    private CandleImageRepository candleImageRepository;
 
     public List<Candle> getAllAvailableCandles() {
         return candleRepository.findByAvailableTrue();
@@ -32,5 +37,18 @@ public class CandleService {
 
     public void deleteCandle(Long id) {
         candleRepository.deleteById(id);
+    }
+    
+    public CandleImage saveCandleImage(CandleImage candleImage) {
+        return candleImageRepository.save(candleImage);
+    }
+    
+    public List<CandleImage> getCandleImages(Long candleId) {
+        return candleImageRepository.findByCandleId(candleId);
+    }
+    
+    public CandleImage getCandleImageById(Long id) {
+        return candleImageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Image not found"));
     }
 }

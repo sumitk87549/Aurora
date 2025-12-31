@@ -50,7 +50,19 @@
               <input type="text" id="creatorsText" name="creatorsText" [(ngModel)]="newCandle.creatorsText" />
             </div>
           </div>
-          <button type="submit" class="btn btn-primary">Add Candle</button>
+          <div class="form-group">
+            <label for="images">Product Images</label>
+            <input type="file" id="images" name="images" multiple accept=".jpg,.jpeg,.png,.gif" (change)="onImageSelect($event)" />
+            <div *ngIf="selectedImages.length > 0" class="selected-images">
+              <p>Selected images:</p>
+              <ul>
+                <li *ngFor="let image of selectedImages">{{ image.name }}</li>
+              </ul>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="isCreating">
+            {{ isCreating ? 'Creating...' : 'Add Candle' }}
+          </button>
         </form>
       </div>
 
@@ -116,6 +128,11 @@
 
         <div class="candles-grid" *ngIf="!isLoading && !errorMessage">
           <div class="candle-card" *ngFor="let candle of candles">
+            <div class="candle-image">
+              <img [src]="getImageUrl(candle.images?.[0])" 
+                   [alt]="candle.name" 
+                   (error)="onImageError($event)" />
+            </div>
             <div class="candle-info">
               <h4>{{ candle.name }}</h4>
               <p>{{ candle.description }}</p>

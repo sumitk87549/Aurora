@@ -1,5 +1,6 @@
 package com.ecomm.AuroraFlames.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,12 +34,13 @@ public class Candle {
     private boolean available = true;
 
     @Column(nullable = true)
-    private boolean creatorsChoice = false;
+    private Boolean creatorsChoice = false;
 
     @Column(columnDefinition = "TEXT")
     private String creatorsText;
     
-    @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"candle"})
     private List<CandleImage> images;
     
     @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

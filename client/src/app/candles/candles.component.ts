@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CandleService, Candle } from '../services/candle.service';
+import { CandleService, Candle, CandleImage } from '../services/candle.service';
 import { CartService } from '../services/cart.service';
 import { WishlistService } from '../services/wishlist.service';
 import { AuthService } from '../services/auth.service';
@@ -76,5 +76,16 @@ export class CandlesComponent implements OnInit {
 
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
+  }
+  
+  getImageUrl(image?: CandleImage): string {
+    if (!image || !image.id) {
+      return '/assets/default-candle.svg';
+    }
+    return `http://localhost:8081/api/candles/images/${image.id}`;
+  }
+
+  onImageError(event: any): void {
+    event.target.src = '/assets/default-candle.svg';
   }
 }

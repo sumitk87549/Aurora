@@ -15,8 +15,9 @@
   <div class="candles-grid" *ngIf="!isLoading && !errorMessage">
     <div class="candle-card" *ngFor="let candle of candles">
       <div class="candle-image">
-        <img [src]="candle.images?.[0]?.imageUrl || '/assets/default-candle.jpg'" 
-             [alt]="candle.name" />
+        <img [src]="getImageUrl(candle.images?.[0])" 
+             [alt]="candle.name" 
+             (error)="onImageError($event)" />
       </div>
       
       <div class="candle-info">

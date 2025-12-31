@@ -7,6 +7,7 @@
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/AuthController.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/CandleController.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/CartController.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/HelloWorldController.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/OrderController.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/WishlistController.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/AuthRequest.java

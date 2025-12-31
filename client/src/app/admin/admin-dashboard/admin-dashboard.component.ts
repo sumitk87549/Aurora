@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CandleService, Candle } from '../../services/candle.service';
+import { CandleService, Candle, CandleImage } from '../../services/candle.service';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -15,6 +16,8 @@ export class AdminDashboardComponent implements OnInit {
   candles: Candle[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
+  isCreating: boolean = false;
+  selectedImages: File[] = [];
 
   newCandle: Candle = {
     id: 0,
@@ -32,7 +35,8 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(
     private candleService: CandleService,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -54,16 +58,60 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   createCandle(): void {
+    this.isCreating = true;
+    
+    // First create the candle
     this.candleService.createCandle(this.newCandle).subscribe({
       next: (createdCandle) => {
-        this.candles.push(createdCandle);
-        this.resetForm();
-        alert('Candle created successfully!');
+        // Then upload images if any
+        if (this.selectedImages.length > 0) {
+          this.uploadImages(createdCandle.id, this.selectedImages);
+        } else {
+          this.candles.push(createdCandle);
+          this.resetForm();
+          alert('Candle created successfully!');
+          this.isCreating = false;
+        }
       },
       error: (error) => {
         alert('Failed to create candle');
+        this.isCreating = false;
       }
     });
+  }
+  
+  onImageSelect(event: any): void {
+    this.selectedImages = Array.from(event.target.files);
+  }
+  
+  uploadImages(candleId: number, images: File[]): void {
+    const formData = new FormData();
+    images.forEach((image, index) => {
+      formData.append('files', image);
+    });
+    
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    
+    console.log('Uploading images for candle ID:', candleId);
+    console.log('Number of images:', images.length);
+    console.log('Token:', token ? 'Present' : 'Missing');
+    
+    this.http.post(`http://localhost:8081/api/admin/candles/${candleId}/images`, formData, { headers })
+      .subscribe({
+        next: (response) => {
+          console.log('Upload response:', response);
+          this.candles.push(this.newCandle);
+          this.resetForm();
+          alert('Candle created successfully with images!');
+          this.isCreating = false;
+        },
+        error: (error) => {
+          console.error('Upload error:', error);
+          alert('Candle created but image upload failed: ' + (error.message || 'Unknown error'));
+          this.isCreating = false;
+        }
+      });
   }
 
   updateCandle(): void {
@@ -119,6 +167,7 @@ export class AdminDashboardComponent implements OnInit {
       creatorsChoice: false,
       creatorsText: ''
     };
+    this.selectedImages = [];
   }
 
   onCreatorsChoiceChange(): void {
@@ -130,5 +179,16 @@ export class AdminDashboardComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     window.location.href = '/';
+  }
+
+  getImageUrl(image?: CandleImage): string {
+    if (!image || !image.id) {
+      return '/assets/default-candle.svg';
+    }
+    return `http://localhost:8081/api/candles/images/${image.id}`;
+  }
+
+  onImageError(event: any): void {
+    event.target.src = '/assets/default-candle.svg';
   }
 }

@@ -16,15 +16,17 @@ export interface Candle {
 
 export interface CandleImage {
   id: number;
-  imageUrl: string;
+  imageName: string;
+  imageData?: string; // Base64 encoded image data for display
+  contentType: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class CandleService {
-  private apiUrl = 'http://localhost:8080/api/candles';
-  private adminApiUrl = 'http://localhost:8080/api/admin';
+  private apiUrl = 'http://localhost:8081/api/candles';
+  private adminApiUrl = 'http://localhost:8081/api/admin';
 
   constructor(private http: HttpClient) { }
 
