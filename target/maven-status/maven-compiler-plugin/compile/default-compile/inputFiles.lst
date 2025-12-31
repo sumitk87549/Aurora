@@ -14,11 +14,17 @@
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/controller/WishlistController.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/AuthRequest.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/AuthResponse.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/CandleDTO.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/CandleImageDTO.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/CheckoutRequest.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/DashboardStats.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/OrderDTO.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/OrderItemDTO.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/RazorpayOrderResponse.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/RegisterRequest.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/UserProfileUpdateRequest.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/WishlistDTO.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/WishlistItemDTO.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/entity/Candle.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/entity/CandleImage.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/entity/Cart.java
@@ -45,3 +51,4 @@
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/PaymentService.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/UserDetailsServiceImpl.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/WishlistService.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/util/DTOMapper.java

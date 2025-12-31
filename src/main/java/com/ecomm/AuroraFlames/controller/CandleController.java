@@ -1,8 +1,10 @@
 package com.ecomm.AuroraFlames.controller;
 
+import com.ecomm.AuroraFlames.dto.CandleDTO;
 import com.ecomm.AuroraFlames.entity.Candle;
 import com.ecomm.AuroraFlames.entity.CandleImage;
 import com.ecomm.AuroraFlames.service.CandleService;
+import com.ecomm.AuroraFlames.util.DTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,9 @@ public class CandleController {
 
     @Autowired
     private CandleService candleService;
+    
+    @Autowired
+    private DTOMapper dtoMapper;
 
     @GetMapping("/images/{id}")
     public ResponseEntity<byte[]> getPublicImage(@PathVariable Long id) {
@@ -42,20 +47,23 @@ public class CandleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Candle>> getAllAvailableCandles() {
+    public ResponseEntity<List<CandleDTO>> getAllAvailableCandles() {
         List<Candle> candles = candleService.getAllAvailableCandles();
-        return ResponseEntity.ok(candles);
+        List<CandleDTO> candleDTOs = dtoMapper.toCandleDTOList(candles);
+        return ResponseEntity.ok(candleDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Candle> getCandleById(@PathVariable Long id) {
+    public ResponseEntity<CandleDTO> getCandleById(@PathVariable Long id) {
         Candle candle = candleService.getCandleById(id);
-        return ResponseEntity.ok(candle);
+        CandleDTO candleDTO = dtoMapper.toCandleDTO(candle);
+        return ResponseEntity.ok(candleDTO);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Candle>> searchCandles(@RequestParam String name) {
+    public ResponseEntity<List<CandleDTO>> searchCandles(@RequestParam String name) {
         List<Candle> candles = candleService.searchCandlesByName(name);
-        return ResponseEntity.ok(candles);
+        List<CandleDTO> candleDTOs = dtoMapper.toCandleDTOList(candles);
+        return ResponseEntity.ok(candleDTOs);
     }
 }

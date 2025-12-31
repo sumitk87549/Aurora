@@ -82,6 +82,13 @@ export class CandlesComponent implements OnInit {
     if (!image || !image.id) {
       return '/assets/default-candle.jpg';
     }
+    
+    // If image has base64 data, use it directly
+    if (image.imageData) {
+      return image.imageData;
+    }
+    
+    // Fallback to API endpoint if no base64 data
     return `http://localhost:8081/api/candles/images/${image.id}`;
   }
 }

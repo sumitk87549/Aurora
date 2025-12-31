@@ -1,10 +1,13 @@
 package com.ecomm.AuroraFlames.controller;
 
+import com.ecomm.AuroraFlames.dto.CandleDTO;
+import com.ecomm.AuroraFlames.dto.OrderDTO;
 import com.ecomm.AuroraFlames.entity.Candle;
 import com.ecomm.AuroraFlames.entity.CandleImage;
 import com.ecomm.AuroraFlames.entity.Order;
 import com.ecomm.AuroraFlames.service.CandleService;
 import com.ecomm.AuroraFlames.service.OrderService;
+import com.ecomm.AuroraFlames.util.DTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -24,6 +28,9 @@ public class AdminController {
 
     @Autowired
     private OrderService orderService;
+    
+    @Autowired
+    private DTOMapper dtoMapper;
 
     // ================== CANDLE MANAGEMENT ==================
 
@@ -48,21 +55,23 @@ public class AdminController {
     }
 
     @GetMapping("/candles")
-    public ResponseEntity<List<Candle>> getAllCandles() {
+    public ResponseEntity<List<CandleDTO>> getAllCandles() {
         List<Candle> candles = candleService.getAllCandles();
-        return ResponseEntity.ok(candles);
+        List<CandleDTO> candleDTOs = dtoMapper.toCandleDTOList(candles);
+        return ResponseEntity.ok(candleDTOs);
     }
 
     @GetMapping("/candles/{id}")
-    public ResponseEntity<Candle> getCandleById(@PathVariable Long id) {
+    public ResponseEntity<CandleDTO> getCandleById(@PathVariable Long id) {
         Candle candle = candleService.getCandleById(id);
-        return ResponseEntity.ok(candle);
+        CandleDTO candleDTO = dtoMapper.toCandleDTO(candle);
+        return ResponseEntity.ok(candleDTO);
     }
 
     // ================== IMAGE MANAGEMENT ==================
 
     @PostMapping("/candles/{id}/images")
-    public ResponseEntity<String> uploadImages(@PathVariable Long id, @RequestParam("files") MultipartFile[] files) {
+    public ResponseEntity<Map<String, Object>> uploadImages(@PathVariable Long id, @RequestParam("files") MultipartFile[] files) {
         try {
             System.out.println("Uploading images for candle ID: " + id);
             System.out.println("Number of files: " + files.length);
@@ -80,7 +89,12 @@ public class AdminController {
                     CandleImage candleImage = new CandleImage();
                     candleImage.setImageName(file.getOriginalFilename());
                     candleImage.setContentType(file.getContentType());
-                    candleImage.setImageData(file.getBytes()); // Store actual bytes in DB
+                    
+                    byte[] imageBytes = file.getBytes();
+                    System.out.println("Image bytes length: " + imageBytes.length);
+                    System.out.println("Image bytes type: " + imageBytes.getClass().getName());
+                    
+                    candleImage.setImageData(imageBytes); // Store actual bytes in DB
                     candleImage.setCandle(candle);
 
                     CandleImage savedImage = candleService.saveCandleImage(candleImage);
@@ -91,11 +105,21 @@ public class AdminController {
                 }
             }
 
-            return ResponseEntity.ok("Successfully uploaded " + successCount + " images to database");
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Successfully uploaded " + successCount + " images to database");
+            response.put("uploadedCount", successCount);
+            
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             System.err.println("Error uploading images: " + e.getMessage());
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Failed to upload images: " + e.getMessage());
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to upload images: " + e.getMessage());
+            
+            return ResponseEntity.internalServerError().body(response);
         }
     }
 
@@ -168,8 +192,10 @@ public class AdminController {
     // ================== ORDER MANAGEMENT ==================
 
     @GetMapping("/orders")
-    public ResponseEntity<List<Order>> getAllOrders() {
-        return ResponseEntity.ok(orderService.getAllOrders());
+    public ResponseEntity<List<OrderDTO>> getAllOrders() {
+        List<Order> orders = orderService.getAllOrders();
+        List<OrderDTO> orderDTOs = dtoMapper.toOrderDTOList(orders);
+        return ResponseEntity.ok(orderDTOs);
     }
 
     @PutMapping("/orders/{id}/status")

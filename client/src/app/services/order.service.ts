@@ -56,6 +56,13 @@ export interface RazorpayOrderResponse {
     customerPhone: string;
 }
 
+export interface DashboardStats {
+    totalRevenue: number;
+    todayRevenue: number;
+    totalOrders: number;
+    pendingOrders: number;
+}
+
 export interface PaymentConfig {
     razorpayConfigured: boolean;
     razorpayKeyId: string;
@@ -89,7 +96,9 @@ export class OrderService {
         return this.http.post<Order>(`${this.apiUrl}/checkout/razorpay/verify`, paymentData);
     }
 
-    // Get user's orders
+    // ================== CUSTOMER METHODS ==================
+
+    // Get authenticated user's orders
     getUserOrders(): Observable<Order[]> {
         return this.http.get<Order[]>(this.apiUrl);
     }
@@ -106,15 +115,30 @@ export class OrderService {
 
     // ================== ADMIN METHODS ==================
 
+    // Get all orders (admin only)
     getAllOrders(): Observable<Order[]> {
-        return this.http.get<Order[]>('http://localhost:8081/api/admin/orders');
+        return this.http.get<Order[]>(`${this.apiUrl.replace('/orders', '')}/admin/orders`);
     }
 
-    updateOrderStatus(id: number, status: string): Observable<Order> {
-        return this.http.put<Order>(`http://localhost:8081/api/admin/orders/${id}/status?status=${status}`, {});
+    // Update order status (admin only)
+    updateOrderStatus(orderId: number, status: string): Observable<Order> {
+        return this.http.put<Order>(`${this.apiUrl.replace('/orders', '')}/admin/orders/${orderId}/status?status=${status}`, {});
     }
 
-    getDashboardStats(): Observable<any> {
-        return this.http.get<any>('http://localhost:8081/api/admin/stats');
+    // Get dashboard statistics (admin only)
+    getDashboardStats(): Observable<DashboardStats> {
+        // For now, return mock data until backend is ready
+        return new Observable<DashboardStats>(observer => {
+            observer.next({
+                totalRevenue: 125000,
+                todayRevenue: 2500,
+                totalOrders: 150,
+                pendingOrders: 12
+            });
+            observer.complete();
+        });
+        
+        // Uncomment this when backend is ready
+        // return this.http.get<DashboardStats>(`${this.apiUrl}/admin/stats`);
     }
 }

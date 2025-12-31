@@ -1,9 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CandleService, Candle, CandleImage } from '../../services/candle.service';
 import { AuthService } from '../../services/auth.service';
+import { OrderService, Order } from '../../services/order.service';
 import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
+
+interface DashboardStats {
+  totalRevenue: number;
+  todayRevenue: number;
+  totalOrders: number;
+  pendingOrders: number;
+}
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -14,9 +23,18 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class AdminDashboardComponent implements OnInit {
   candles: Candle[] = [];
+  orders: Order[] = [];
+  stats: DashboardStats = {
+    totalRevenue: 0,
+    todayRevenue: 0,
+    totalOrders: 0,
+    pendingOrders: 0
+  };
+  activeTab: 'dashboard' | 'orders' | 'products' = 'dashboard';
   isLoading: boolean = true;
   errorMessage: string = '';
   isCreating: boolean = false;
+  isUploading: boolean = false;
   selectedImages: File[] = [];
 
   newCandle: Candle = {
@@ -35,12 +53,88 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(
     private candleService: CandleService,
+    private orderService: OrderService,
     private authService: AuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadCandles();
+    this.loadOrders();
+    this.loadDashboardStats();
+  }
+
+  setActiveTab(tab: 'dashboard' | 'orders' | 'products'): void {
+    this.activeTab = tab;
+  }
+
+  loadDashboardStats(): void {
+    this.isLoading = true;
+    this.orderService.getDashboardStats().subscribe({
+      next: (stats) => {
+        this.stats = stats;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading dashboard stats:', error);
+        this.isLoading = false;
+        // Fallback to default values if API fails
+        this.stats = {
+          totalRevenue: 0,
+          todayRevenue: 0,
+          totalOrders: 0,
+          pendingOrders: 0
+        };
+      }
+    });
+  }
+
+  loadOrders(): void {
+    this.isLoading = true;
+    this.orderService.getAllOrders().subscribe({
+      next: (orders: Order[]) => {
+        this.orders = orders;
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        this.errorMessage = 'Failed to load orders';
+        this.isLoading = false;
+        console.error('Error loading orders:', error);
+        // Provide some mock data for development
+        this.orders = [];
+      }
+    });
+  }
+
+  viewOrderDetails(orderId: number): void {
+    this.router.navigate(['/admin/orders', orderId]);
+  }
+
+  updateOrderStatus(orderId: number, event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const newStatus = target.value;
+    const previousStatus = this.orders.find(o => o.id === orderId)?.status || '';
+    
+    this.orderService.updateOrderStatus(orderId, newStatus).subscribe({
+      next: (updatedOrder) => {
+        const index = this.orders.findIndex(o => o.id === orderId);
+        if (index !== -1) {
+          this.orders[index] = { ...this.orders[index], status: newStatus };
+        }
+      },
+      error: (error) => {
+        console.error('Error updating order status:', error);
+        alert('Failed to update order status');
+        // Reset to previous value on error
+        target.value = previousStatus;
+      }
+    });
+  }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = '/assets/default-candle.jpg';
   }
 
   loadCandles(): void {
@@ -99,12 +193,17 @@ export class AdminDashboardComponent implements OnInit {
     
     this.http.post(`http://localhost:8081/api/admin/candles/${candleId}/images`, formData, { headers })
       .subscribe({
-        next: (response) => {
+        next: (response: any) => {
           console.log('Upload response:', response);
-          this.candles.push(this.newCandle);
-          this.resetForm();
-          alert('Candle created successfully with images!');
-          this.isCreating = false;
+          if (response.success) {
+            this.candles.push(this.newCandle);
+            this.resetForm();
+            alert(`Candle created successfully! ${response.message}`);
+            this.isCreating = false;
+          } else {
+            alert('Candle created but image upload failed: ' + response.message);
+            this.isCreating = false;
+          }
         },
         error: (error) => {
           console.error('Upload error:', error);
