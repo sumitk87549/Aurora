@@ -1,0 +1,50 @@
+<div class="candles-container">
+  <header class="candles-header">
+    <h1>Our Premium Candles</h1>
+    <p>Discover our handcrafted collection of scented candles</p>
+  </header>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <p>Loading candles...</p>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="candles-grid" *ngIf="!isLoading && !errorMessage">
+    <div class="candle-card" *ngFor="let candle of candles">
+      <div class="candle-image">
+        <img [src]="candle.images?.[0]?.imageUrl || '/assets/default-candle.jpg'" 
+             [alt]="candle.name" />
+      </div>
+      
+      <div class="candle-info">
+        <h3>{{ candle.name }}</h3>
+        <p class="candle-description">{{ candle.description }}</p>
+        <div class="candle-price">₹{{ candle.price }}</div>
+        <div class="candle-stock" [class.out-of-stock]="!candle.available || candle.stockQuantity === 0">
+          {{ candle.available && candle.stockQuantity > 0 ? 'In Stock (' + candle.stockQuantity + ')' : 'Out of Stock' }}
+        </div>
+      </div>
+      
+      <div class="candle-actions">
+        <button class="btn btn-primary" 
+                (click)="addToCart(candle)"
+                [disabled]="!candle.available || candle.stockQuantity === 0 || !isLoggedIn()">
+          Add to Cart
+        </button>
+        <button class="btn btn-secondary" 
+                (click)="addToWishlist(candle)"
+                [disabled]="!isLoggedIn()">
+          Add to Wishlist
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading && !errorMessage && candles.length === 0">
+    <h2>No candles available</h2>
+    <p>Check back later for new arrivals!</p>
+  </div>
+</div>

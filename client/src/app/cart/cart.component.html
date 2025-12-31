@@ -1,0 +1,56 @@
+<div class="cart-container">
+  <h1>Shopping Cart</h1>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <p>Loading cart...</p>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="cart-content" *ngIf="!isLoading && !errorMessage">
+    <div class="cart-items" *ngIf="cart && cart.cartItems.length > 0">
+      <div class="cart-item" *ngFor="let item of cart.cartItems">
+        <div class="item-info">
+          <h3>{{ item.candle.name }}</h3>
+          <p class="item-description">{{ item.candle.description }}</p>
+          <p class="item-price">₹{{ item.priceAtTime }} each</p>
+        </div>
+        
+        <div class="item-quantity">
+          <button class="quantity-btn" (click)="updateQuantity(item.id, item.quantity - 1)">-</button>
+          <span class="quantity">{{ item.quantity }}</span>
+          <button class="quantity-btn" (click)="updateQuantity(item.id, item.quantity + 1)">+</button>
+        </div>
+        
+        <div class="item-total">
+          <p>₹{{ item.priceAtTime * item.quantity }}</p>
+          <button class="remove-btn" (click)="removeItem(item.id)">Remove</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-cart" *ngIf="cart && cart.cartItems.length === 0">
+      <h2>Your cart is empty</h2>
+      <p>Add some candles to get started!</p>
+      <button class="btn btn-primary" routerLink="/candles">Continue Shopping</button>
+    </div>
+
+    <div class="cart-summary" *ngIf="cart && cart.cartItems.length > 0">
+      <div class="summary-row">
+        <span>Total Items:</span>
+        <span>{{ getTotalItems() }}</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total Price:</span>
+        <span>₹{{ getTotalPrice() }}</span>
+      </div>
+      
+      <div class="cart-actions">
+        <button class="btn btn-secondary" (click)="clearCart()">Clear Cart</button>
+        <button class="btn btn-primary" (click)="proceedToCheckout()">Proceed to Checkout</button>
+      </div>
+    </div>
+  </div>
+</div>

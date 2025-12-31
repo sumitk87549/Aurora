@@ -1,0 +1,35 @@
+<div class="wishlist-container">
+  <h1>My Wishlist</h1>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <p>Loading wishlist...</p>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="wishlist-content" *ngIf="!isLoading && !errorMessage">
+    <div class="wishlist-items" *ngIf="wishlist && wishlist.wishlistItems.length > 0">
+      <div class="wishlist-item" *ngFor="let item of wishlist.wishlistItems">
+        <div class="item-info">
+          <h3>{{ item.candle.name }}</h3>
+          <p class="item-description">{{ item.candle.description }}</p>
+          <p class="item-price">₹{{ item.candle.price }}</p>
+          <p class="item-date">Added on {{ formatDate(item.addedAt) }}</p>
+        </div>
+        
+        <div class="item-actions">
+          <button class="btn btn-primary" (click)="addToCart(item.candle.id)">Add to Cart</button>
+          <button class="btn btn-secondary" (click)="removeFromWishlist(item.id)">Remove</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-wishlist" *ngIf="wishlist && wishlist.wishlistItems.length === 0">
+      <h2>Your wishlist is empty</h2>
+      <p>Add some candles you love to your wishlist!</p>
+      <button class="btn btn-primary" routerLink="/candles">Browse Candles</button>
+    </div>
+  </div>
+</div>

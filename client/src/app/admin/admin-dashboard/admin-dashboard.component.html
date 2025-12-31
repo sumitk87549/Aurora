@@ -1,0 +1,115 @@
+<div class="admin-dashboard">
+  <header class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </header>
+
+  <div class="admin-content">
+    <div class="candle-management">
+      <h2>Candle Management</h2>
+
+      <!-- Add New Candle Form -->
+      <div class="add-candle-form">
+        <h3>Add New Candle</h3>
+        <form (ngSubmit)="createCandle()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" [(ngModel)]="newCandle.name" required />
+            </div>
+            <div class="form-group">
+              <label for="price">Price</label>
+              <input type="number" id="price" [(ngModel)]="newCandle.price" required min="0" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" [(ngModel)]="newCandle.description" required rows="3"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="stockQuantity">Stock Quantity</label>
+              <input type="number" id="stockQuantity" [(ngModel)]="newCandle.stockQuantity" required min="0" />
+            </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" [(ngModel)]="newCandle.available" />
+                Available
+              </label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Candle</button>
+        </form>
+      </div>
+
+      <!-- Edit Candle Form -->
+      <div class="edit-candle-form" *ngIf="isEditing && editingCandle">
+        <h3>Edit Candle</h3>
+        <form (ngSubmit)="updateCandle()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editName">Name</label>
+              <input type="text" id="editName" [(ngModel)]="editingCandle.name" required />
+            </div>
+            <div class="form-group">
+              <label for="editPrice">Price</label>
+              <input type="number" id="editPrice" [(ngModel)]="editingCandle.price" required min="0" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="editDescription">Description</label>
+            <textarea id="editDescription" [(ngModel)]="editingCandle.description" required rows="3"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editStockQuantity">Stock Quantity</label>
+              <input type="number" id="editStockQuantity" [(ngModel)]="editingCandle.stockQuantity" required min="0" />
+            </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" [(ngModel)]="editingCandle.available" />
+                Available
+              </label>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update Candle</button>
+            <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Candles List -->
+      <div class="candles-list">
+        <h3>Existing Candles</h3>
+        <div class="loading-spinner" *ngIf="isLoading">
+          <p>Loading candles...</p>
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <div class="candles-grid" *ngIf="!isLoading && !errorMessage">
+          <div class="candle-card" *ngFor="let candle of candles">
+            <div class="candle-info">
+              <h4>{{ candle.name }}</h4>
+              <p>{{ candle.description }}</p>
+              <div class="candle-details">
+                <span class="price">₹{{ candle.price }}</span>
+                <span class="stock">Stock: {{ candle.stockQuantity }}</span>
+                <span class="status" [class.available]="candle.available" [class.unavailable]="!candle.available">
+                  {{ candle.available ? 'Available' : 'Unavailable' }}
+                </span>
+              </div>
+            </div>
+            <div class="candle-actions">
+              <button class="btn btn-secondary" (click)="editCandle(candle)">Edit</button>
+              <button class="btn btn-danger" (click)="deleteCandle(candle.id)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

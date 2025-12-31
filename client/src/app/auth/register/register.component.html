@@ -1,0 +1,83 @@
+<div class="register-container">
+  <div class="register-card">
+    <h2>Register for Aurora Flames</h2>
+    
+    <form (ngSubmit)="onSubmit()" class="register-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input 
+            type="text" 
+            id="firstName" 
+            name="firstName" 
+            [(ngModel)]="registerData.firstName" 
+            required 
+            placeholder="Enter your first name"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input 
+            type="text" 
+            id="lastName" 
+            name="lastName" 
+            [(ngModel)]="registerData.lastName" 
+            required 
+            placeholder="Enter your last name"
+          />
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          [(ngModel)]="registerData.email" 
+          required 
+          email
+          placeholder="Enter your email"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input 
+          type="tel" 
+          id="phone" 
+          name="phone" 
+          [(ngModel)]="registerData.phone" 
+          required 
+          placeholder="Enter your phone number"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          [(ngModel)]="registerData.password" 
+          required 
+          minlength="6"
+          placeholder="Enter your password (min 6 characters)"
+        />
+      </div>
+      
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+      
+      <button type="submit" class="register-btn" [disabled]="isLoading">
+        {{ isLoading ? 'Registering...' : 'Register' }}
+      </button>
+    </form>
+    
+    <div class="register-footer">
+      <p>Already have an account? <a (click)="navigateToLogin()" class="login-link">Login here</a></p>
+    </div>
+  </div>
+</div>

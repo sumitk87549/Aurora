@@ -1,0 +1,58 @@
+<div class="checkout-container">
+  <h1>Checkout</h1>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <p>Loading checkout...</p>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="checkout-content" *ngIf="!isLoading && !errorMessage && cart">
+    <div class="checkout-form">
+      <div class="form-section">
+        <h2>Shipping Information</h2>
+        <div class="form-group">
+          <label for="shippingAddress">Shipping Address</label>
+          <textarea 
+            id="shippingAddress" 
+            name="shippingAddress" 
+            [(ngModel)]="checkoutData.shippingAddress" 
+            required 
+            rows="4"
+            placeholder="Enter your complete shipping address"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Payment Method</h2>
+        <div class="payment-methods">
+          <label class="payment-option">
+            <input type="radio" name="paymentMethod" value="COD" [(ngModel)]="checkoutData.paymentMethod" />
+            <span>Cash on Delivery (COD)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Order Summary</h2>
+        <div class="order-items">
+          <div class="order-item" *ngFor="let item of cart.cartItems">
+            <span>{{ item.candle.name }} x {{ item.quantity }}</span>
+            <span>₹{{ item.priceAtTime * item.quantity }}</span>
+          </div>
+        </div>
+        <div class="order-total">
+          <span>Total:</span>
+          <span>₹{{ getTotalPrice() }}</span>
+        </div>
+      </div>
+
+      <button class="place-order-btn" (click)="placeOrder()">
+        Place Order (COD)
+      </button>
+    </div>
+  </div>
+</div>
