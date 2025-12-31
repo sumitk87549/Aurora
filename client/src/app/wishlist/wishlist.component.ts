@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { WishlistService, Wishlist } from '../services/wishlist.service';
 import { CartService } from '../services/cart.service';
-import { CommonModule, NgIf, NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-wishlist',
   templateUrl: './wishlist.component.html',
   styleUrls: ['./wishlist.component.scss'],
   standalone: true,
-  imports: [CommonModule, NgIf, NgFor]
+  imports: [CommonModule]
 })
 export class WishlistComponent implements OnInit {
   wishlist: Wishlist | null = null;

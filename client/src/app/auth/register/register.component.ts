@@ -36,7 +36,13 @@ export class RegisterComponent {
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = 'Registration failed. Please try again.';
+        if (error.status === 409) {
+          this.errorMessage = 'Email already exists. Please use a different email.';
+        } else if (error.error && typeof error.error === 'string') {
+          this.errorMessage = error.error;
+        } else {
+          this.errorMessage = 'Registration failed. Please try again.';
+        }
       }
     });
   }

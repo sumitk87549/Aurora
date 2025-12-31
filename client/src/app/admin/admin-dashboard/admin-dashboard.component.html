@@ -15,27 +15,39 @@
           <div class="form-row">
             <div class="form-group">
               <label for="name">Name</label>
-              <input type="text" id="name" [(ngModel)]="newCandle.name" required />
+              <input type="text" id="name" name="name" [(ngModel)]="newCandle.name" required />
             </div>
             <div class="form-group">
               <label for="price">Price</label>
-              <input type="number" id="price" [(ngModel)]="newCandle.price" required min="0" />
+              <input type="number" id="price" name="price" [(ngModel)]="newCandle.price" required min="0" />
             </div>
           </div>
           <div class="form-group">
             <label for="description">Description</label>
-            <textarea id="description" [(ngModel)]="newCandle.description" required rows="3"></textarea>
+            <textarea id="description" name="description" [(ngModel)]="newCandle.description" required rows="3"></textarea>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label for="stockQuantity">Stock Quantity</label>
-              <input type="number" id="stockQuantity" [(ngModel)]="newCandle.stockQuantity" required min="0" />
+              <input type="number" id="stockQuantity" name="stockQuantity" [(ngModel)]="newCandle.stockQuantity" required min="0" />
             </div>
             <div class="form-group">
               <label>
-                <input type="checkbox" [(ngModel)]="newCandle.available" />
+                <input type="checkbox" name="available" [(ngModel)]="newCandle.available" />
                 Available
               </label>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>
+                <input type="checkbox" name="creatorsChoice" [(ngModel)]="newCandle.creatorsChoice" (change)="onCreatorsChoiceChange()" />
+                Creator's Choice
+              </label>
+            </div>
+            <div class="form-group" *ngIf="newCandle.creatorsChoice">
+              <label for="creatorsText">Creator's Text</label>
+              <input type="text" id="creatorsText" name="creatorsText" [(ngModel)]="newCandle.creatorsText" />
             </div>
           </div>
           <button type="submit" class="btn btn-primary">Add Candle</button>
@@ -49,27 +61,39 @@
           <div class="form-row">
             <div class="form-group">
               <label for="editName">Name</label>
-              <input type="text" id="editName" [(ngModel)]="editingCandle.name" required />
+              <input type="text" id="editName" name="editName" [(ngModel)]="editingCandle.name" required />
             </div>
             <div class="form-group">
               <label for="editPrice">Price</label>
-              <input type="number" id="editPrice" [(ngModel)]="editingCandle.price" required min="0" />
+              <input type="number" id="editPrice" name="editPrice" [(ngModel)]="editingCandle.price" required min="0" />
             </div>
           </div>
           <div class="form-group">
             <label for="editDescription">Description</label>
-            <textarea id="editDescription" [(ngModel)]="editingCandle.description" required rows="3"></textarea>
+            <textarea id="editDescription" name="editDescription" [(ngModel)]="editingCandle.description" required rows="3"></textarea>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label for="editStockQuantity">Stock Quantity</label>
-              <input type="number" id="editStockQuantity" [(ngModel)]="editingCandle.stockQuantity" required min="0" />
+              <input type="number" id="editStockQuantity" name="editStockQuantity" [(ngModel)]="editingCandle.stockQuantity" required min="0" />
             </div>
             <div class="form-group">
               <label>
-                <input type="checkbox" [(ngModel)]="editingCandle.available" />
+                <input type="checkbox" name="editAvailable" [(ngModel)]="editingCandle.available" />
                 Available
               </label>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>
+                <input type="checkbox" name="editCreatorsChoice" [(ngModel)]="editingCandle.creatorsChoice" (change)="onCreatorsChoiceChange()" />
+                Creator's Choice
+              </label>
+            </div>
+            <div class="form-group" *ngIf="editingCandle.creatorsChoice">
+              <label for="editCreatorsText">Creator's Text</label>
+              <input type="text" id="editCreatorsText" name="editCreatorsText" [(ngModel)]="editingCandle.creatorsText" />
             </div>
           </div>
           <div class="form-actions">

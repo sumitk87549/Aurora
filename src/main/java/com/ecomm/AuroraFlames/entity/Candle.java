@@ -31,6 +31,12 @@ public class Candle {
     
     @Column(nullable = false)
     private boolean available = true;
+
+    @Column(nullable = true)
+    private boolean creatorsChoice = false;
+
+    @Column(columnDefinition = "TEXT")
+    private String creatorsText;
     
     @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CandleImage> images;

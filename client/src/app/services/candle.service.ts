@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Candle {
@@ -9,6 +9,8 @@ export interface Candle {
   price: number;
   stockQuantity: number;
   available: boolean;
+  creatorsChoice?: boolean;
+  creatorsText?: string;
   images?: CandleImage[];
 }
 
@@ -38,26 +40,15 @@ export class CandleService {
     return this.http.get<Candle[]>(`${this.apiUrl}/search?name=${name}`);
   }
 
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('currentUser');
-    const user = token ? JSON.parse(token) : null;
-    return new HttpHeaders({
-      'Authorization': `Bearer ${user?.token}`
-    });
-  }
-
   createCandle(candle: Candle): Observable<Candle> {
-    return this.http.post<Candle>(`${this.adminApiUrl}/candles`, candle, 
-      { headers: this.getAuthHeaders() });
+    return this.http.post<Candle>(`${this.adminApiUrl}/candles`, candle);
   }
 
   updateCandle(id: number, candle: Candle): Observable<Candle> {
-    return this.http.put<Candle>(`${this.adminApiUrl}/candles/${id}`, candle, 
-      { headers: this.getAuthHeaders() });
+    return this.http.put<Candle>(`${this.adminApiUrl}/candles/${id}`, candle);
   }
 
   deleteCandle(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.adminApiUrl}/candles/${id}`, 
-      { headers: this.getAuthHeaders() });
+    return this.http.delete<void>(`${this.adminApiUrl}/candles/${id}`);
   }
 }

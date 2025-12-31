@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface WishlistItem {
@@ -31,25 +31,15 @@ export class WishlistService {
 
   constructor(private http: HttpClient) { }
 
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('currentUser');
-    const user = token ? JSON.parse(token) : null;
-    return new HttpHeaders({
-      'Authorization': `Bearer ${user?.token}`
-    });
-  }
-
   getWishlist(): Observable<Wishlist> {
-    return this.http.get<Wishlist>(this.apiUrl, { headers: this.getAuthHeaders() });
+    return this.http.get<Wishlist>(this.apiUrl);
   }
 
   addToWishlist(candleId: number): Observable<Wishlist> {
-    return this.http.post<Wishlist>(`${this.apiUrl}/add?candleId=${candleId}`, {}, 
-      { headers: this.getAuthHeaders() });
+    return this.http.post<Wishlist>(`${this.apiUrl}/add?candleId=${candleId}`, {});
   }
 
   removeFromWishlist(itemId: number): Observable<Wishlist> {
-    return this.http.delete<Wishlist>(`${this.apiUrl}/remove/${itemId}`, 
-      { headers: this.getAuthHeaders() });
+    return this.http.delete<Wishlist>(`${this.apiUrl}/remove/${itemId}`);
   }
 }

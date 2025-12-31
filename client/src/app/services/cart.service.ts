@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface CartItem {
@@ -32,35 +32,23 @@ export class CartService {
 
   constructor(private http: HttpClient) { }
 
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('currentUser');
-    const user = token ? JSON.parse(token) : null;
-    return new HttpHeaders({
-      'Authorization': `Bearer ${user?.token}`
-    });
-  }
-
   getCart(): Observable<Cart> {
-    return this.http.get<Cart>(this.apiUrl, { headers: this.getAuthHeaders() });
+    return this.http.get<Cart>(this.apiUrl);
   }
 
   addToCart(candleId: number, quantity: number): Observable<Cart> {
-    return this.http.post<Cart>(`${this.apiUrl}/add?candleId=${candleId}&quantity=${quantity}`, {}, 
-      { headers: this.getAuthHeaders() });
+    return this.http.post<Cart>(`${this.apiUrl}/add?candleId=${candleId}&quantity=${quantity}`, {});
   }
 
   updateCartItem(itemId: number, quantity: number): Observable<Cart> {
-    return this.http.put<Cart>(`${this.apiUrl}/update/${itemId}?quantity=${quantity}`, {}, 
-      { headers: this.getAuthHeaders() });
+    return this.http.put<Cart>(`${this.apiUrl}/update/${itemId}?quantity=${quantity}`, {});
   }
 
   removeFromCart(itemId: number): Observable<Cart> {
-    return this.http.delete<Cart>(`${this.apiUrl}/remove/${itemId}`, 
-      { headers: this.getAuthHeaders() });
+    return this.http.delete<Cart>(`${this.apiUrl}/remove/${itemId}`);
   }
 
   clearCart(): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/clear`, 
-      { headers: this.getAuthHeaders() });
+    return this.http.delete<void>(`${this.apiUrl}/clear`);
   }
 }

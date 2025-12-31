@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { CartService, Cart } from '../services/cart.service';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [FormsModule, CommonModule]
 })
 export class CheckoutComponent implements OnInit {
   cart: Cart | null = null;
   isLoading: boolean = true;
   errorMessage: string = '';
-
+  
   checkoutData = {
     shippingAddress: '',
     paymentMethod: 'COD'
@@ -46,7 +46,7 @@ export class CheckoutComponent implements OnInit {
 
   getTotalPrice(): number {
     if (!this.cart) return 0;
-    return this.cart.cartItems.reduce((total, item) =>
+    return this.cart.cartItems.reduce((total, item) => 
       total + (item.priceAtTime * item.quantity), 0);
   }
 

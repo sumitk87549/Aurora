@@ -22,7 +22,9 @@ export class AdminDashboardComponent implements OnInit {
     description: '',
     price: 0,
     stockQuantity: 0,
-    available: true
+    available: true,
+    creatorsChoice: false,
+    creatorsText: ''
   };
 
   isEditing: boolean = false;
@@ -113,8 +115,16 @@ export class AdminDashboardComponent implements OnInit {
       description: '',
       price: 0,
       stockQuantity: 0,
-      available: true
+      available: true,
+      creatorsChoice: false,
+      creatorsText: ''
     };
+  }
+
+  onCreatorsChoiceChange(): void {
+    if (!this.newCandle.creatorsChoice) {
+      this.newCandle.creatorsText = '';
+    }
   }
 
   logout(): void {

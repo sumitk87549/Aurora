@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CartService, Cart } from '../services/cart.service';
 import { Router } from '@angular/router';
-import { CommonModule, NgIf, NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
   standalone: true,
-  imports: [CommonModule, NgIf, NgFor]
+  imports: [CommonModule]
 })
 export class CartComponent implements OnInit {
   cart: Cart | null = null;
