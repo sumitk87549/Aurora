@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   isMobileMenuOpen = false;
+  isProfileDropdownOpen = false;
   isScrolled = false;
   cartItemCount = 0;
 
@@ -80,10 +81,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    // Close profile dropdown when mobile menu is toggled
+    if (this.isMobileMenuOpen) {
+      this.isProfileDropdownOpen = false;
+    }
+  }
+
+  toggleProfileDropdown() {
+    this.isProfileDropdownOpen = !this.isProfileDropdownOpen;
   }
 
   closeMobileMenu() {
     this.isMobileMenuOpen = false;
+    this.isProfileDropdownOpen = false;
   }
 
   isLoggedIn(): boolean {
