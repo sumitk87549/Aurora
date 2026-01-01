@@ -14,55 +14,78 @@
       <span class="bar"></span>
     </button>
 
-    <!-- Navigation Links -->
-    <nav class="nav-menu" [class.active]="isMobileMenuOpen">
-      <div class="nav-links">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link"
-          (click)="closeMobileMenu()">Home</a>
-        <a routerLink="/candles" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Collection</a>
-
-        <ng-container *ngIf="isLoggedIn()">
-          <!-- Admin Link -->
-          <a *ngIf="isAdmin()" routerLink="/admin" routerLinkActive="active" class="nav-link admin-link"
-            (click)="closeMobileMenu()">
-            <span class="icon">⚡</span> Dashboard
-          </a>
-
-<!-- Profile Dropdown -->
-<div class="nav-item dropdown-container">
-  <a  class="nav-link profile-link"
-    (click)="toggleProfileDropdown()">
-    <span class="user-avatar">{{ userAvatar }}</span>
-    <span class="user-name">{{ userName }}</span>
-    <span class="dropdown-arrow">▼</span>
-  </a>
-
-  <div class="dropdown-menu" [class.active]="isProfileDropdownOpen || isMobileMenuOpen">
-    <a routerLink="/profile" class="dropdown-item" (click)="closeMobileMenu()">
-      <span class="icon">👤</span> Profile
-    </a>
-    <a routerLink="/cart" class="dropdown-item" (click)="closeMobileMenu()">
-      <span class="icon">🛒</span> Cart ({{cartItemCount}})
-    </a>
-    <a routerLink="/wishlist" class="dropdown-item" (click)="closeMobileMenu()">
-      <span class="icon">❤️</span> Wishlist
-    </a>
-    <div class="dropdown-divider"></div>
-    <button class="dropdown-item logout-item" (click)="logout()">
-      <span class="icon">🚪</span> Logout
-    </button>
+<!-- Navigation Links -->
+<nav class="nav-menu" [class.active]="isMobileMenuOpen">
+  <!-- Mobile Profile Header (only visible in mobile) -->
+  <div class="mobile-profile-header" *ngIf="isLoggedIn()">
+    <div class="user-info">
+      <span class="user-avatar-large">{{ userAvatar }}</span>
+      <span class="user-name-large">{{ userName }}</span>
+    </div>
   </div>
-</div>
-        </ng-container>
 
-        <ng-container *ngIf="!isLoggedIn()">
-          <div class="auth-buttons">
-            <a routerLink="/login" class="nav-link" (click)="closeMobileMenu()">Login</a>
-            <a routerLink="/register" class="btn btn-sm btn-primary" (click)="closeMobileMenu()">Sign Up</a>
-          </div>
-        </ng-container>
+  <div class="nav-links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link"
+      (click)="closeMobileMenu()">Home</a>
+    <a routerLink="/candles" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Collection</a>
+
+    <ng-container *ngIf="isLoggedIn()">
+      <!-- Admin Link -->
+      <a *ngIf="isAdmin()" routerLink="/admin" routerLinkActive="active" class="nav-link admin-link"
+        (click)="closeMobileMenu()">
+        <span class="icon">⚡</span> Dashboard
+      </a>
+
+      <!-- Desktop Profile Dropdown (hidden in mobile) -->
+      <div class="nav-item dropdown-container desktop-only">
+        <a  class="nav-link profile-link">
+          <span class="user-avatar">{{ userAvatar }}</span>
+          <span class="user-name">{{ userName }}</span>
+          <span class="dropdown-arrow">▼</span>
+        </a>
+
+        <div class="dropdown-menu">
+          <a routerLink="/profile" class="dropdown-item">
+            <span class="icon">👤</span> Profile
+          </a>
+          <a routerLink="/cart" class="dropdown-item">
+            <span class="icon">🛒</span> Cart ({{cartItemCount}})
+          </a>
+          <a routerLink="/wishlist" class="dropdown-item">
+            <span class="icon">❤️</span> Wishlist
+          </a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout-item" (click)="logout()">
+            <span class="icon">🚪</span> Logout
+          </button>
+        </div>
       </div>
-    </nav>
+
+      <!-- Mobile Profile Items (hidden in desktop) -->
+      <div class="mobile-profile-items">
+        <a routerLink="/profile" class="nav-link" (click)="closeMobileMenu()">
+          <span class="icon">👤</span> Profile
+        </a>
+        <a routerLink="/cart" class="nav-link" (click)="closeMobileMenu()">
+          <span class="icon">🛒</span> Cart ({{cartItemCount}})
+        </a>
+        <a routerLink="/wishlist" class="nav-link" (click)="closeMobileMenu()">
+          <span class="icon">❤️</span> Wishlist
+        </a>
+        <button class="nav-link logout-item" (click)="logout()">
+          <span class="icon">🚪</span> Logout
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!isLoggedIn()">
+      <div class="auth-buttons">
+        <a routerLink="/login" class="nav-link" (click)="closeMobileMenu()">Login</a>
+        <a routerLink="/register" class="btn btn-sm btn-primary" (click)="closeMobileMenu()">Sign Up</a>
+      </div>
+    </ng-container>
+  </div>
+</nav>
 
     <!-- Overlay for mobile menu -->
     <div class="overlay" [class.active]="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
