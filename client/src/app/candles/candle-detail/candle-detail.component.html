@@ -1,0 +1,93 @@
+<div class="page-container">
+    <div class="loading-spinner" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Loading candle details...</p>
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage && !isLoading">
+        {{ errorMessage }}
+        <button class="btn btn-secondary" routerLink="/candles">Back to Collection</button>
+    </div>
+
+    <div class="product-detail-container" *ngIf="candle && !isLoading">
+        <button class="back-link" routerLink="/candles">← Back to Candles</button>
+
+        <div class="product-layout">
+            <!-- Image Section -->
+            <div class="product-gallery">
+                <div class="main-image-container">
+                    <button class="nav-btn prev" *ngIf="candle.images && candle.images.length > 1"
+                        (click)="prevImage()">❮</button>
+
+                    <img [src]="getCurrentImageUrl()" [alt]="candle.name" class="main-image">
+
+                    <button class="nav-btn next" *ngIf="candle.images && candle.images.length > 1"
+                        (click)="nextImage()">❯</button>
+
+                    <div class="badges">
+                        <span class="badge out-of-stock" *ngIf="!candle.available || candle.stockQuantity === 0">Out of
+                            Stock</span>
+                        <span class="badge creators-choice" *ngIf="candle.creatorsChoice">Creator's Choice</span>
+                    </div>
+                </div>
+
+                <!-- Thumbnails -->
+                <div class="thumbnails" *ngIf="candle.images && candle.images.length > 1">
+                    <div class="thumbnail" *ngFor="let img of candle.images; let i = index"
+                        [class.active]="i === currentImageIndex" (click)="currentImageIndex = i">
+                        <img [src]="getImageUrl(img)" [alt]="candle.name">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="product-info">
+                <h1 class="product-title">{{ candle.name }}</h1>
+
+                <div class="product-price-row">
+                    <span class="price">₹{{ candle.price }}</span>
+                    <span class="stock-status" [class.in-stock]="candle.available && candle.stockQuantity > 0">
+                        {{ candle.available && candle.stockQuantity > 0 ? 'In Stock' : 'Currently Unavailable' }}
+                    </span>
+                </div>
+
+                <div class="creators-note" *ngIf="candle.creatorsChoice && candle.creatorsText">
+                    <div class="note-icon">✨</div>
+                    <p class="note-text">"{{ candle.creatorsText }}" <br> <span class="author">- From the Creator</span>
+                    </p>
+                </div>
+
+                <div class="description">
+                    <h3>Description</h3>
+                    <p>{{ candle.description }}</p>
+                </div>
+
+                <div class="actions">
+                    <!-- Add to Cart / Quantity Controls -->
+                    <div class="cart-action-area">
+                        <ng-container *ngIf="!cartItem; else quantityControls">
+                            <button class="btn btn-primary btn-lg btn-block" (click)="addToCart()"
+                                [disabled]="!candle.available || candle.stockQuantity === 0 || isUpdatingCart">
+                                {{ isUpdatingCart ? 'Adding...' : 'Add to Cart' }}
+                            </button>
+                        </ng-container>
+
+                        <ng-template #quantityControls>
+                            <div class="quantity-controls">
+                                <button class="qty-btn" (click)="updateQuantity(-1)"
+                                    [disabled]="isUpdatingCart">−</button>
+                                <span class="qty-value">{{ cartItem?.quantity }}</span>
+                                <button class="qty-btn" (click)="updateQuantity(1)"
+                                    [disabled]="isUpdatingCart || (candle.stockQuantity <= (cartItem?.quantity || 0))">+</button>
+                            </div>
+                        </ng-template>
+                    </div>
+
+                    <button class="btn btn-secondary btn-lg" (click)="addToWishlist()">
+                        Add to Wishlist
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

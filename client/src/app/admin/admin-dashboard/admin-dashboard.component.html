@@ -171,7 +171,25 @@
       <div class="products-grid">
         <div class="product-card" *ngFor="let candle of candles">
           <div class="product-image">
-            <img [src]="getImageUrl(candle.images?.[0])" (error)="onImageError($event)" [alt]="candle.name">
+            <div class="image-container">
+              <img [src]="getCurrentImageUrl(candle)" (error)="onImageError($event)" [alt]="candle.name">
+              
+              <!-- Image Navigation Arrows -->
+              <button class="nav-arrow prev" *ngIf="candle.images && candle.images.length > 1"
+                (click)="prevImage(candle, $event)">❮</button>
+              <button class="nav-arrow next" *ngIf="candle.images && candle.images.length > 1"
+                (click)="nextImage(candle, $event)">❯</button>
+            </div>
+            
+            <!-- Image Management -->
+            <div class="image-management" *ngIf="candle.images && candle.images.length > 0">
+              <span class="image-counter">{{ (currentImageIndex[candle.id] || 0) + 1 }} / {{ candle.images.length }}</span>
+              <button class="btn-icon delete-image" 
+                *ngIf="candle.images && candle.images.length > 1"
+                (click)="deleteImage(candle.id, candle.images[currentImageIndex[candle.id] || 0].id)"
+                title="Delete current image">🗑️</button>
+            </div>
+            
             <span class="stock-badge" [class.low]="candle.stockQuantity < 5">
               Stock: {{ candle.stockQuantity }}
             </span>
@@ -251,6 +269,15 @@
                 <input type="file" multiple (change)="onImageSelect($event)" accept="image/*">
                 <span *ngIf="selectedImages.length > 0">{{ selectedImages.length }} files selected</span>
               </div>
+            </div>
+
+            <div class="form-group full" *ngIf="isEditing">
+              <label>Additional Product Images</label>
+              <div class="file-upload">
+                <input type="file" multiple (change)="onEditingImageSelect($event)" accept="image/*">
+                <span *ngIf="editingImages.length > 0">{{ editingImages.length }} new files selected</span>
+              </div>
+              <small class="form-hint">Add more images to this product (existing images will remain)</small>
             </div>
           </div>
 

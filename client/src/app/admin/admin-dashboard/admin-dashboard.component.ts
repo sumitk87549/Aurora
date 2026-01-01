@@ -36,6 +36,8 @@ export class AdminDashboardComponent implements OnInit {
   isCreating: boolean = false;
   isUploading: boolean = false;
   selectedImages: File[] = [];
+  editingImages: File[] = [];
+  currentImageIndex: { [key: number]: number } = {};
 
   newCandle: Candle = {
     id: 0,
@@ -177,6 +179,10 @@ export class AdminDashboardComponent implements OnInit {
   onImageSelect(event: any): void {
     this.selectedImages = Array.from(event.target.files);
   }
+
+  onEditingImageSelect(event: any): void {
+    this.editingImages = Array.from(event.target.files);
+  }
   
   uploadImages(candleId: number, images: File[]): void {
     const formData = new FormData();
@@ -222,8 +228,14 @@ export class AdminDashboardComponent implements OnInit {
         if (index !== -1) {
           this.candles[index] = updatedCandle;
         }
-        this.cancelEdit();
-        alert('Candle updated successfully!');
+        
+        // Upload new images if any
+        if (this.editingImages.length > 0) {
+          this.uploadImages(updatedCandle.id, this.editingImages);
+        } else {
+          this.cancelEdit();
+          alert('Candle updated successfully!');
+        }
       },
       error: (error) => {
         alert('Failed to update candle');
@@ -253,6 +265,7 @@ export class AdminDashboardComponent implements OnInit {
   cancelEdit(): void {
     this.isEditing = false;
     this.editingCandle = null;
+    this.editingImages = [];
   }
 
   resetForm(): void {
@@ -285,5 +298,51 @@ export class AdminDashboardComponent implements OnInit {
       return '/assets/default-candle.jpg';
     }
     return `http://localhost:8081/api/candles/images/${image.id}`;
+  }
+
+  // Image navigation for product cards
+  nextImage(candle: Candle, event: Event): void {
+    event.stopPropagation();
+    if (!candle.images || candle.images.length <= 1) return;
+
+    const currentIndex = this.currentImageIndex[candle.id] || 0;
+    this.currentImageIndex[candle.id] = (currentIndex + 1) % candle.images.length;
+  }
+
+  prevImage(candle: Candle, event: Event): void {
+    event.stopPropagation();
+    if (!candle.images || candle.images.length <= 1) return;
+
+    const currentIndex = this.currentImageIndex[candle.id] || 0;
+    this.currentImageIndex[candle.id] = (currentIndex - 1 + candle.images.length) % candle.images.length;
+  }
+
+  getCurrentImageUrl(candle: Candle): string {
+    if (!candle.images || candle.images.length === 0) {
+      return '/assets/default-candle.jpg';
+    }
+
+    const index = this.currentImageIndex[candle.id] || 0;
+    const image = candle.images[index];
+    return this.getImageUrl(image);
+  }
+
+  deleteImage(candleId: number, imageId: number): void {
+    if (confirm('Are you sure you want to delete this image?')) {
+      const token = this.authService.getToken();
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+      
+      this.http.delete(`http://localhost:8081/api/admin/candles/${candleId}/images/${imageId}`, { headers })
+        .subscribe({
+          next: () => {
+            // Refresh the candle data
+            this.loadCandles();
+            alert('Image deleted successfully!');
+          },
+          error: (error) => {
+            alert('Failed to delete image');
+          }
+        });
+    }
   }
 }
