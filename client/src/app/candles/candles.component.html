@@ -1,4 +1,11 @@
 <div class="candles-container">
+  <!-- Debug Section (remove in production) -->
+  <div style="background: #f0f0f0; padding: 10px; margin-bottom: 10px; font-family: monospace; font-size: 12px;">
+    <strong>DEBUG:</strong> Cart Items Count: {{ cartItems.size }} | 
+    Logged In: {{ isLoggedIn() }} | 
+    CartItems Map: {{ cartItems | json }}
+  </div>
+
   <header class="collection-header">
     <h1>Our Premium Candles</h1>
     <p class="header-description">Discover our handcrafted collection of scented candles, made with love and premium
@@ -23,6 +30,11 @@
       </div>
 
       <div class="filter-options">
+        <label class="filter-checkbox">
+          <input type="checkbox" [(ngModel)]="showAvailableOnly" (change)="applyFilters()">
+          Available Only
+        </label>
+
         <select class="filter-select" [(ngModel)]="sortBy" (change)="onSortChange()">
           <option value="name-asc">Name: A-Z</option>
           <option value="name-desc">Name: Z-A</option>
@@ -35,7 +47,7 @@
 
     <!-- Product Grid -->
     <div class="product-grid" *ngIf="paginatedCandles.length > 0">
-      <div class="product-card" *ngFor="let candle of paginatedCandles">
+      <div class="product-card" *ngFor="let candle of paginatedCandles" [class.featured-glow]="candle.featured">
         <div class="card-image-wrapper" (click)="navigateToCandleDetail(candle)">
           <div class="image-container">
             <img [src]="getCurrentImageUrl(candle)" [alt]="candle.name" class="product-image"
@@ -48,16 +60,18 @@
               (click)="nextImage(candle, $event)">❯</button>
           </div>
 
-          <div class="card-badges" *ngIf="candle.stockQuantity === 0 || !candle.available">
-            <span class="badge out-of-stock">Out of Stock</span>
+          <div class="card-badges">
+            <span class="badge out-of-stock" *ngIf="candle.stockQuantity === 0 || !candle.available">Out of Stock</span>
+            <span class="badge featured" *ngIf="candle.featured">✨ Featured</span>
           </div>
 
-          <div class="card-overlay">
-            <button class="btn-icon-action" title="Add to Wishlist" (click)="addToWishlist(candle)"
-              [disabled]="!isLoggedIn()">
-              ❤️
-            </button>
-          </div>
+          <!-- Wishlist Heart Button -->
+          <button class="wishlist-heart" [class.in-wishlist]="isInWishlist(candle.id)"
+            [class.updating]="isUpdatingWishlist(candle.id)" (click)="toggleWishlist(candle, $event)"
+            [disabled]="!isLoggedIn() || isUpdatingWishlist(candle.id)"
+            title="{{ isInWishlist(candle.id) ? 'Remove from Wishlist' : 'Add to Wishlist' }}">
+            {{ isInWishlist(candle.id) ? '❤️' : '🤍' }}
+          </button>
         </div>
 
         <div class="card-content" (click)="navigateToCandleDetail(candle)">
@@ -67,10 +81,24 @@
 
           <div class="product-footer">
             <div class="product-price">₹{{ candle.price }}</div>
-            <button class="btn btn-primary btn-sm" (click)="addToCart(candle)"
-              [disabled]="!candle.available || candle.stockQuantity === 0 || !isLoggedIn()">
-              Add to Cart
-            </button>
+
+            <!-- Cart Controls -->
+            <div class="cart-action" (click)="$event.stopPropagation()">
+              <!-- Add to Cart Button -->
+              <button class="btn btn-primary btn-sm" *ngIf="!isInCart(candle.id)" (click)="addToCart(candle)"
+                [disabled]="!candle.available || candle.stockQuantity === 0 || !isLoggedIn() || isUpdatingCart(candle.id)">
+                {{ isUpdatingCart(candle.id) ? '...' : 'Add to Cart' }}
+              </button>
+
+              <!-- Quantity Controls -->
+              <div class="quantity-controls" *ngIf="isInCart(candle.id)">
+                <button class="qty-btn minus" (click)="updateQuantity(candle, -1)"
+                  [disabled]="isUpdatingCart(candle.id)">−</button>
+                <span class="qty-value">{{ getCartQuantity(candle.id) }}</span>
+                <button class="qty-btn plus" (click)="updateQuantity(candle, 1)"
+                  [disabled]="isUpdatingCart(candle.id) || candle.stockQuantity <= getCartQuantity(candle.id)">+</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

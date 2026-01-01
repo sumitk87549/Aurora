@@ -3,6 +3,7 @@
   text-align: center;
   padding: var(--space-3xl) 0 var(--space-xl);
   background: var(--bg-primary);
+  padding-top: 9%;
   margin-bottom: var(--space-lg);
   position: relative;
 
@@ -385,5 +386,197 @@
 
   &:hover:not(.active) {
     background: var(--bg-secondary);
+  }
+}
+
+/* ==================== WISHLIST HEART ==================== */
+.wishlist-heart {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  z-index: 3;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+
+  &:hover {
+    transform: scale(1.1);
+    background: white;
+    box-shadow: var(--shadow-md);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  &.in-wishlist {
+    animation: heartBeat 0.3s ease;
+  }
+
+  &.updating {
+    animation: pulse 0.5s infinite;
+  }
+}
+
+@keyframes heartBeat {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ==================== QUANTITY CONTROLS ==================== */
+.cart-action {
+  min-width: 110px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.qty-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    background: var(--primary-light);
+    color: white;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &.minus {
+    color: #c62828;
+
+    &:hover:not(:disabled) {
+      background: #ffebee;
+      color: #c62828;
+    }
+  }
+
+  &.plus {
+    color: #2e7d32;
+
+    &:hover:not(:disabled) {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+  }
+}
+
+.qty-value {
+  min-width: 35px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+/* ==================== FEATURED GLOW ==================== */
+.product-card.featured-glow {
+  position: relative;
+  border: 1px solid rgba(255, 193, 7, 0.4);
+  box-shadow:
+    0 0 15px rgba(255, 193, 7, 0.2),
+    0 0 30px rgba(255, 193, 7, 0.1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg,
+        rgba(255, 215, 0, 0.1),
+        rgba(218, 165, 32, 0.05),
+        rgba(255, 193, 7, 0.1));
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &:hover {
+    box-shadow:
+      0 0 20px rgba(255, 193, 7, 0.3),
+      0 0 40px rgba(255, 193, 7, 0.15),
+      var(--shadow-lg);
+    border-color: rgba(255, 193, 7, 0.6);
+  }
+}
+
+.badge.featured {
+  background: linear-gradient(135deg, #ffd700, #daa520);
+  color: #1a1a1a;
+  border: none;
+}
+
+/* ==================== FILTER CHECKBOX ==================== */
+.filter-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--primary-light);
+    color: white;
+  }
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
   }
 }

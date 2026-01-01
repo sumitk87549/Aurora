@@ -1,21 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Candle } from './candle.service';
 
 export interface CartItem {
   id: number;
   candle: Candle;
   quantity: number;
   priceAtTime: number;
-}
-
-export interface Candle {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  stockQuantity: number;
-  available: boolean;
 }
 
 export interface Cart {

@@ -17,19 +17,19 @@ public class Candle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
     private String name;
-    
+
     @Column(columnDefinition = "TEXT")
     private String description;
-    
+
     @Column(nullable = false)
     private BigDecimal price;
-    
+
     @Column(nullable = false)
     private Integer stockQuantity;
-    
+
     @Column(nullable = false)
     private boolean available = true;
 
@@ -38,17 +38,20 @@ public class Candle {
 
     @Column(columnDefinition = "TEXT")
     private String creatorsText;
-    
+
+    @Column(nullable = true)
+    private Boolean featured = false;
+
     @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnoreProperties({"candle"})
+    @JsonIgnoreProperties({ "candle" })
     private List<CandleImage> images;
-    
+
     @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CartItem> cartItems;
-    
+
     @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WishlistItem> wishlistItems;
-    
+
     @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
 }

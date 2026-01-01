@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UserService, UserProfile } from '../services/user.service';
+import { ToastService } from '../services/toast.service';
+import { INDIAN_STATES, STATE_CITIES, State } from '../data/location-data';
 import { CommonModule, NgIf, NgFor } from '@angular/common';
 
 @Component({
@@ -19,14 +21,19 @@ export class ProfileComponent implements OnInit {
 
   emojis: string[] = ['🕯️', '✨', '🔥', '⭐', '🌙', '☀️', '🌸', '💀', '🎃', '🎄', '🤍', '🧡', '💜', '🪄', '🧚'];
 
+  // Location data
+  states: State[] = INDIAN_STATES;
+  cities: string[] = [];
+
   constructor(
     private fb: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private toastService: ToastService
   ) {
     this.profileForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      email: [{ value: '', disabled: true }, Validators.required], // Email cannot be changed
+      email: [{ value: '', disabled: true }, Validators.required],
       phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
       profileEmoji: ['🕯️'],
       defaultAddress: [''],
@@ -38,6 +45,25 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProfile();
+
+    // Watch for state changes to update cities
+    this.profileForm.get('state')?.valueChanges.subscribe(stateName => {
+      this.onStateChange(stateName);
+    });
+  }
+
+  onStateChange(stateName: string): void {
+    const state = this.states.find(s => s.name === stateName);
+    if (state) {
+      this.cities = STATE_CITIES[state.code] || [];
+      // Reset city if current city is not in new list
+      const currentCity = this.profileForm.get('city')?.value;
+      if (currentCity && !this.cities.includes(currentCity)) {
+        this.profileForm.patchValue({ city: '' });
+      }
+    } else {
+      this.cities = [];
+    }
   }
 
   loadProfile(): void {
@@ -45,10 +71,15 @@ export class ProfileComponent implements OnInit {
     this.userService.getProfile().subscribe({
       next: (data) => {
         this.profileForm.patchValue(data);
+        // Load cities for the state
+        if (data.state) {
+          this.onStateChange(data.state);
+        }
         this.isLoading = false;
       },
       error: (error) => {
         this.errorMessage = 'Failed to load profile';
+        this.toastService.error('Failed to load profile');
         this.isLoading = false;
       }
     });
@@ -69,16 +100,18 @@ export class ProfileComponent implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
 
-    const profileData: UserProfile = this.profileForm.getRawValue(); // Needed to get disabled email if we wanted sending it, but typically we send what API expects
+    const profileData: UserProfile = this.profileForm.getRawValue();
 
     this.userService.updateProfile(profileData).subscribe({
       next: (updatedProfile) => {
         this.successMessage = 'Profile updated successfully!';
+        this.toastService.success('Profile updated successfully!');
         this.isSaving = false;
         this.profileForm.markAsPristine();
       },
       error: (error) => {
         this.errorMessage = 'Failed to update profile';
+        this.toastService.error('Failed to update profile');
         this.isSaving = false;
       }
     });

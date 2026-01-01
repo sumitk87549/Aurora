@@ -266,6 +266,20 @@ label {
   padding: 0 var(--space-lg);
 }
 
+.container-full {
+  width: 100%;
+  padding: 0 var(--space-lg);
+  max-width: none;
+  margin: 0;
+}
+
+.container-no-padding {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0;
+}
+
 .text-center { text-align: center; }
 .text-left { text-align: left; }
 .text-right { text-align: right; }
@@ -435,6 +449,14 @@ label {
   
   .container {
     padding: 0 var(--space-md);
+  }
+  
+  .container-full {
+    padding: 0 var(--space-md);
+  }
+  
+  .container-no-padding {
+    padding: 0;
   }
   
   .btn {

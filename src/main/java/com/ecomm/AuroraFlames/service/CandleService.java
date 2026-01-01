@@ -39,6 +39,11 @@ public class CandleService {
         return candleRepository.findByNameContainingIgnoreCase(name);
     }
 
+    // Get featured candles for homepage
+    public List<Candle> getFeaturedCandles() {
+        return candleRepository.findByFeaturedTrueAndAvailableTrue();
+    }
+
     public Candle saveCandle(Candle candle) {
         return candleRepository.save(candle);
     }

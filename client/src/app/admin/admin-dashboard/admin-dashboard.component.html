@@ -173,23 +173,23 @@
           <div class="product-image">
             <div class="image-container">
               <img [src]="getCurrentImageUrl(candle)" (error)="onImageError($event)" [alt]="candle.name">
-              
+
               <!-- Image Navigation Arrows -->
               <button class="nav-arrow prev" *ngIf="candle.images && candle.images.length > 1"
                 (click)="prevImage(candle, $event)">❮</button>
               <button class="nav-arrow next" *ngIf="candle.images && candle.images.length > 1"
                 (click)="nextImage(candle, $event)">❯</button>
             </div>
-            
+
             <!-- Image Management -->
             <div class="image-management" *ngIf="candle.images && candle.images.length > 0">
-              <span class="image-counter">{{ (currentImageIndex[candle.id] || 0) + 1 }} / {{ candle.images.length }}</span>
-              <button class="btn-icon delete-image" 
-                *ngIf="candle.images && candle.images.length > 1"
+              <span class="image-counter">{{ (currentImageIndex[candle.id] || 0) + 1 }} / {{ candle.images.length
+                }}</span>
+              <button class="btn-icon delete-image" *ngIf="candle.images && candle.images.length > 1"
                 (click)="deleteImage(candle.id, candle.images[currentImageIndex[candle.id] || 0].id)"
                 title="Delete current image">🗑️</button>
             </div>
-            
+
             <span class="stock-badge" [class.low]="candle.stockQuantity < 5">
               Stock: {{ candle.stockQuantity }}
             </span>
@@ -253,6 +253,15 @@
                   [(ngModel)]="isEditing && editingCandle ? editingCandle.creatorsChoice : newCandle.creatorsChoice"
                   name="cc" (change)="onCreatorsChoiceChange()">
                 Creator's Choice
+              </label>
+            </div>
+
+            <div class="form-group check-group">
+              <label class="checkbox-label featured-checkbox">
+                <input type="checkbox"
+                  [(ngModel)]="isEditing && editingCandle ? editingCandle.featured : newCandle.featured"
+                  name="featured">
+                ✨ Featured (Shows on Homepage)
               </label>
             </div>
 

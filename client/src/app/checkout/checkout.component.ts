@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CartService, Cart } from '../services/cart.service';
 import { OrderService } from '../services/order.service';
+import { PricingService, OrderSummary } from '../services/pricing.service';
+import { ToastService } from '../services/toast.service';
+import { INDIAN_STATES, STATE_CITIES, State } from '../data/location-data';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -23,10 +26,19 @@ export class CheckoutComponent implements OnInit {
   razorpayConfigured = false;
   razorpayKeyId = '';
 
+  // Location data
+  states: State[] = INDIAN_STATES;
+  cities: string[] = [];
+
+  // Order summary
+  orderSummary: OrderSummary | null = null;
+
   constructor(
     private fb: FormBuilder,
     private cartService: CartService,
     private orderService: OrderService,
+    private pricingService: PricingService,
+    private toastService: ToastService,
     private router: Router
   ) {
     this.checkoutForm = this.fb.group({
@@ -46,6 +58,27 @@ export class CheckoutComponent implements OnInit {
     this.loadCart();
     this.loadPaymentConfig();
     this.loadRazorpayScript();
+
+    // Watch for state changes to update cities
+    this.checkoutForm.get('state')?.valueChanges.subscribe(stateName => {
+      this.onStateChange(stateName);
+    });
+  }
+
+  onStateChange(stateName: string): void {
+    const state = this.states.find(s => s.name === stateName);
+    if (state) {
+      this.cities = STATE_CITIES[state.code] || [];
+      // Reset city if current city is not in new list
+      const currentCity = this.checkoutForm.get('city')?.value;
+      if (currentCity && !this.cities.includes(currentCity)) {
+        this.checkoutForm.patchValue({ city: '' });
+      }
+    } else {
+      this.cities = [];
+    }
+    // Recalculate order summary with new state
+    this.calculateOrderSummary();
   }
 
   loadCart(): void {
@@ -57,12 +90,24 @@ export class CheckoutComponent implements OnInit {
         if (!data || !data.cartItems || data.cartItems.length === 0) {
           this.router.navigate(['/cart']);
         }
+        this.calculateOrderSummary();
       },
       error: (error) => {
         this.errorMessage = 'Failed to load cart';
         this.isLoading = false;
       }
     });
+  }
+
+  calculateOrderSummary(): void {
+    if (!this.cart || this.cart.cartItems.length === 0) {
+      this.orderSummary = null;
+      return;
+    }
+
+    const subtotal = this.getTotalPrice();
+    const stateName = this.checkoutForm.get('state')?.value || 'Rajasthan';
+    this.orderSummary = this.pricingService.calculateOrderSummary(subtotal, stateName);
   }
 
   loadPaymentConfig(): void {
@@ -86,17 +131,21 @@ export class CheckoutComponent implements OnInit {
   }
 
   getShippingCost(): number {
-    const total = this.getTotalPrice();
-    return total >= 999 ? 0 : 99;
+    return this.orderSummary?.deliveryCharge || 0;
+  }
+
+  getGST(): number {
+    return this.orderSummary?.gst || 0;
   }
 
   getGrandTotal(): number {
-    return this.getTotalPrice() + this.getShippingCost();
+    return this.orderSummary?.totalAmount || 0;
   }
 
   onSubmit(): void {
     if (this.checkoutForm.invalid) {
       this.checkoutForm.markAllAsTouched();
+      this.toastService.warning('Please fill all required fields correctly');
       return;
     }
 
@@ -117,11 +166,12 @@ export class CheckoutComponent implements OnInit {
   processCODOrder(request: any): void {
     this.orderService.checkoutCOD(request).subscribe({
       next: (order) => {
-        alert('Order placed successfully! Order #' + order.orderNumber);
-        this.router.navigate(['/orders', order.id]); // Or order confirmation page
+        this.toastService.success('Order placed successfully! Order #' + order.orderNumber);
+        this.router.navigate(['/orders', order.id]);
       },
       error: (error) => {
         this.errorMessage = error.error?.message || 'Failed to place order';
+        this.toastService.error(this.errorMessage);
         this.isProcessing = false;
       }
     });
@@ -134,6 +184,7 @@ export class CheckoutComponent implements OnInit {
       },
       error: (error) => {
         this.errorMessage = error.error?.message || 'Failed to initiate payment';
+        this.toastService.error(this.errorMessage);
         this.isProcessing = false;
       }
     });
@@ -163,12 +214,12 @@ export class CheckoutComponent implements OnInit {
     if (typeof Razorpay !== 'undefined') {
       const rzp = new Razorpay(options);
       rzp.on('payment.failed', (response: any) => {
-        alert('Payment Failed: ' + response.error.description);
+        this.toastService.error('Payment Failed: ' + response.error.description);
         this.isProcessing = false;
       });
       rzp.open();
     } else {
-      alert('Razorpay SDK not loaded. Please check your internet connection.');
+      this.toastService.error('Razorpay SDK not loaded. Please check your internet connection.');
       this.isProcessing = false;
     }
   }
@@ -183,14 +234,13 @@ export class CheckoutComponent implements OnInit {
 
     this.orderService.verifyRazorpayPayment(paymentData).subscribe({
       next: (order) => {
-        alert('Payment Successful! Order Placed.');
+        this.toastService.success('Payment Successful! Order Placed.');
         this.router.navigate(['/orders', order.id]);
       },
       error: (error) => {
-        alert('Payment verification failed. Please contact support.');
+        this.toastService.error('Payment verification failed. Please contact support.');
         this.isProcessing = false;
       }
     });
   }
 }
-

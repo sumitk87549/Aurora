@@ -9,5 +9,8 @@ import java.util.List;
 @Repository
 public interface CandleRepository extends JpaRepository<Candle, Long> {
     List<Candle> findByAvailableTrue();
+
     List<Candle> findByNameContainingIgnoreCase(String name);
+
+    List<Candle> findByFeaturedTrueAndAvailableTrue();
 }

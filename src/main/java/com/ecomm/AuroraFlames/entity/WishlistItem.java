@@ -1,5 +1,6 @@
 package com.ecomm.AuroraFlames.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,15 +16,16 @@ public class WishlistItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wishlist_id")
+    @JsonIgnore
     private Wishlist wishlist;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "candle_id")
     private Candle candle;
-    
+
     @Column(nullable = false)
     private LocalDateTime addedAt;
 }

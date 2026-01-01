@@ -11,6 +11,7 @@ export interface Candle {
   available: boolean;
   creatorsChoice?: boolean;
   creatorsText?: string;
+  featured?: boolean;
   images?: CandleImage[];
 }
 
@@ -52,5 +53,9 @@ export class CandleService {
 
   deleteCandle(id: number): Observable<void> {
     return this.http.delete<void>(`${this.adminApiUrl}/candles/${id}`);
+  }
+
+  getFeaturedCandles(): Observable<Candle[]> {
+    return this.http.get<Candle[]>(`${this.apiUrl}/featured`);
   }
 }

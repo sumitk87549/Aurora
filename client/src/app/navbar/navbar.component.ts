@@ -1,8 +1,10 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { CartService } from '../services/cart.service';
+import { UserService, UserProfile } from '../services/user.service';
 import { CommonModule, NgIf, NgClass, AsyncPipe } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -11,23 +13,64 @@ import { CommonModule, NgIf, NgClass, AsyncPipe } from '@angular/common';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit, OnDestroy {
   isMobileMenuOpen = false;
   isScrolled = false;
   cartItemCount = 0;
 
+  // User profile info
+  userName: string = '';
+  userAvatar: string = '🕯️';
+  private subscriptions: Subscription[] = [];
+
   constructor(
     private router: Router,
     public authService: AuthService,
-    private cartService: CartService
-  ) {
-    // Subscribe to cart changes if logged in
-    this.cartService.getCart().subscribe(
-      cart => {
+    private cartService: CartService,
+    private userService: UserService
+  ) { }
+
+  ngOnInit(): void {
+    if (this.isLoggedIn()) {
+      this.loadUserProfile();
+      this.loadCartCount();
+    }
+
+    // Subscribe to auth changes
+    // (In production, you'd have an auth state observable)
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  loadUserProfile(): void {
+    // Initial fetch
+    this.userService.refreshProfile();
+
+    // Subscribe to updates
+    const sub = this.userService.userProfile$.subscribe(profile => {
+      if (profile) {
+        this.userName = profile.firstName || 'User';
+        this.userAvatar = profile.profileEmoji || '🕯️';
+      } else {
+        this.userName = 'User';
+        this.userAvatar = '🕯️';
+      }
+    });
+    this.subscriptions.push(sub);
+  }
+
+  loadCartCount(): void {
+    const sub = this.cartService.getCart().subscribe({
+      next: (cart) => {
         this.cartItemCount = cart ? cart.cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0) : 0;
       },
-      error => console.error('Error fetching cart count', error)
-    );
+      error: () => {
+        this.cartItemCount = 0;
+      }
+    });
+    this.subscriptions.push(sub);
   }
 
   @HostListener('window:scroll', [])
@@ -54,7 +97,8 @@ export class NavbarComponent {
   logout() {
     this.authService.logout();
     this.closeMobileMenu();
+    this.userName = '';
+    this.userAvatar = '🕯️';
     this.router.navigate(['/']);
   }
 }
-

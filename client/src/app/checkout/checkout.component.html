@@ -71,14 +71,27 @@
 
           <div class="form-row three-col">
             <div class="form-group">
-              <label for="city">City</label>
-              <input type="text" id="city" formControlName="city" placeholder="Mumbai"
-                [class.error]="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched">
+              <label for="state">State</label>
+              <select id="state" formControlName="state"
+                [class.error]="checkoutForm.get('state')?.invalid && checkoutForm.get('state')?.touched">
+                <option value="">Select State</option>
+                <option *ngFor="let state of states" [value]="state.name">{{ state.name }}</option>
+              </select>
+              <span class="error-text" *ngIf="checkoutForm.get('state')?.invalid && checkoutForm.get('state')?.touched">
+                State is required
+              </span>
             </div>
             <div class="form-group">
-              <label for="state">State</label>
-              <input type="text" id="state" formControlName="state" placeholder="Maharashtra"
-                [class.error]="checkoutForm.get('state')?.invalid && checkoutForm.get('state')?.touched">
+              <label for="city">City</label>
+              <select id="city" formControlName="city"
+                [class.error]="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched"
+                [disabled]="!cities.length">
+                <option value="">Select City</option>
+                <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+              </select>
+              <span class="error-text" *ngIf="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched">
+                City is required
+              </span>
             </div>
             <div class="form-group">
               <label for="pincode">Pincode</label>
@@ -146,9 +159,15 @@
             <span>₹{{ getTotalPrice() }}</span>
           </div>
 
-          <div class="summary-row">
-            <span>Shipping</span>
-            <span>{{ getShippingCost() === 0 ? 'Free' : '₹' + getShippingCost() }}</span>
+          <div class="summary-row" *ngIf="orderSummary">
+            <span>GST ({{ orderSummary.gstRate }}%)</span>
+            <span>₹{{ getGST() }}</span>
+          </div>
+
+          <div class="summary-row" *ngIf="orderSummary">
+            <span>Delivery</span>
+            <span *ngIf="orderSummary.isFreeDelivery" class="free-tag">Free</span>
+            <span *ngIf="!orderSummary.isFreeDelivery">₹{{ getShippingCost() }}</span>
           </div>
 
           <div class="summary-divider"></div>
@@ -158,10 +177,16 @@
             <span>₹{{ getGrandTotal() }}</span>
           </div>
 
+          <div class="delivery-estimate" *ngIf="orderSummary">
+            <span class="estimate-icon">📦</span>
+            <span>Est. Delivery: {{ orderSummary.estimatedDeliveryDate.earliest | date:'mediumDate' }} - {{
+              orderSummary.estimatedDeliveryDate.latest | date:'mediumDate' }}</span>
+          </div>
+
           <button type="submit" class="btn btn-primary btn-block place-order-btn"
             [disabled]="isProcessing || checkoutForm.invalid">
             <span *ngIf="!isProcessing">
-              {{ checkoutForm.get('paymentMethod')?.value === 'COD' ? 'Place Order' : 'Pay Now' }}
+              Place Order
             </span>
             <span *ngIf="isProcessing">Processing...</span>
           </button>

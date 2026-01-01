@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, NgIf, NgFor, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Location } from '@angular/common';
 import { CandleService, Candle, CandleImage } from '../../services/candle.service';
 import { CartService, Cart, CartItem } from '../../services/cart.service';
 import { WishlistService } from '../../services/wishlist.service';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-candle-detail',
@@ -13,7 +16,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './candle-detail.component.html',
   styleUrl: './candle-detail.component.scss'
 })
-export class CandleDetailComponent implements OnInit {
+export class CandleDetailComponent implements OnInit, OnDestroy {
   candle: Candle | null = null;
   isLoading: boolean = true;
   errorMessage: string = '';
@@ -23,13 +26,20 @@ export class CandleDetailComponent implements OnInit {
   cartItem: CartItem | null = null;
   isUpdatingCart: boolean = false;
 
+  // Wishlist state
+  isInWishlist: boolean = false;
+  isUpdatingWishlist: boolean = false;
+  private subscriptions: Subscription[] = [];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     private candleService: CandleService,
     private cartService: CartService,
     private wishlistService: WishlistService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -48,6 +58,7 @@ export class CandleDetailComponent implements OnInit {
         this.candle = data;
         this.isLoading = false;
         this.checkCartStatus();
+        this.checkWishlistStatus();
       },
       error: (error) => {
         this.errorMessage = 'Failed to load candle parameters';
@@ -58,12 +69,28 @@ export class CandleDetailComponent implements OnInit {
 
   checkCartStatus(): void {
     if (this.isLoggedIn() && this.candle) {
-      this.cartService.getCart().subscribe({
+      const sub = this.cartService.getCart().subscribe({
         next: (cart) => {
           this.cartItem = cart.cartItems.find(item => item.candle.id === this.candle?.id) || null;
         }
       });
+      this.subscriptions.push(sub);
     }
+  }
+
+  checkWishlistStatus(): void {
+    if (this.isLoggedIn() && this.candle) {
+      const sub = this.wishlistService.getWishlist().subscribe({
+        next: (wishlist) => {
+          this.isInWishlist = wishlist.wishlistItems.some(item => item.candle.id === this.candle?.id);
+        }
+      });
+      this.subscriptions.push(sub);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   // Carousel Logic
@@ -107,10 +134,10 @@ export class CandleDetailComponent implements OnInit {
       next: (cart) => {
         this.cartItem = cart.cartItems.find(item => item.candle.id === this.candle?.id) || null;
         this.isUpdatingCart = false;
-        // alert('Added to cart!'); 
+        this.toastService.success('Added to cart!');
       },
       error: (error) => {
-        alert('Failed to add to cart');
+        this.toastService.error('Failed to add to cart');
         this.isUpdatingCart = false;
       }
     });
@@ -127,16 +154,17 @@ export class CandleDetailComponent implements OnInit {
         next: (cart) => {
           this.cartItem = null;
           this.isUpdatingCart = false;
+          this.toastService.info('Removed from cart');
         },
         error: (error) => {
-          alert('Failed to remove item');
+          this.toastService.error('Failed to remove item');
           this.isUpdatingCart = false;
         }
       });
     } else {
       // Check stock limit if increasing
       if (delta > 0 && this.candle && newQuantity > this.candle.stockQuantity) {
-        alert(`Sorry, only ${this.candle.stockQuantity} items available in stock.`);
+        this.toastService.warning(`Sorry, only ${this.candle.stockQuantity} items available in stock.`);
         this.isUpdatingCart = false;
         return;
       }
@@ -147,29 +175,55 @@ export class CandleDetailComponent implements OnInit {
           this.isUpdatingCart = false;
         },
         error: (error) => {
-          alert('Failed to update quantity');
+          this.toastService.error('Failed to update quantity');
           this.isUpdatingCart = false;
         }
       });
     }
   }
 
-  addToWishlist(): void {
+  toggleWishlist(): void {
     if (!this.checkLogin() || !this.candle) return;
 
-    this.wishlistService.addToWishlist(this.candle.id).subscribe({
-      next: () => {
-        alert('Added to wishlist successfully!');
-      },
-      error: (error) => {
-        alert('Failed to add to wishlist');
-      }
-    });
+    this.isUpdatingWishlist = true;
+
+    if (this.isInWishlist) {
+      this.wishlistService.getWishlist().subscribe({
+        next: (wishlist) => {
+          const item = wishlist.wishlistItems.find(i => i.candle.id === this.candle?.id);
+          if (item) {
+            this.wishlistService.removeFromWishlist(item.id).subscribe({
+              next: () => {
+                this.isInWishlist = false;
+                this.toastService.info('Removed from wishlist');
+                this.isUpdatingWishlist = false;
+              },
+              error: () => {
+                this.toastService.error('Failed to remove from wishlist');
+                this.isUpdatingWishlist = false;
+              }
+            });
+          }
+        }
+      });
+    } else {
+      this.wishlistService.addToWishlist(this.candle.id).subscribe({
+        next: () => {
+          this.isInWishlist = true;
+          this.toastService.success('Added to wishlist!');
+          this.isUpdatingWishlist = false;
+        },
+        error: (error) => {
+          this.toastService.error('Failed to add to wishlist');
+          this.isUpdatingWishlist = false;
+        }
+      });
+    }
   }
 
   checkLogin(): boolean {
     if (!this.authService.isLoggedIn()) {
-      alert('Please login to perform this action');
+      this.toastService.warning('Please login to perform this action');
       this.router.navigate(['/login']);
       return false;
     }
@@ -178,5 +232,9 @@ export class CandleDetailComponent implements OnInit {
 
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CartService, Cart } from '../services/cart.service';
-import { Router } from '@angular/router';
+import { PricingService, OrderSummary } from '../services/pricing.service';
+import { ToastService } from '../services/toast.service';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule, SlicePipe } from '@angular/common';
 
 @Component({
@@ -8,14 +10,20 @@ import { CommonModule, SlicePipe } from '@angular/common';
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
   standalone: true,
-  imports: [CommonModule, SlicePipe]
+  imports: [CommonModule, SlicePipe, RouterLink]
 })
 export class CartComponent implements OnInit {
   cart: Cart | null = null;
   isLoading: boolean = true;
   errorMessage: string = '';
+  orderSummary: OrderSummary | null = null;
 
-  constructor(private cartService: CartService, private router: Router) { }
+  constructor(
+    private cartService: CartService,
+    private pricingService: PricingService,
+    private toastService: ToastService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.loadCart();
@@ -27,12 +35,24 @@ export class CartComponent implements OnInit {
       next: (data) => {
         this.cart = data;
         this.isLoading = false;
+        this.calculateOrderSummary();
       },
       error: (error) => {
         this.errorMessage = 'Failed to load cart';
         this.isLoading = false;
       }
     });
+  }
+
+  calculateOrderSummary(): void {
+    if (!this.cart || this.cart.cartItems.length === 0) {
+      this.orderSummary = null;
+      return;
+    }
+
+    // Default to Rajasthan for cart page (actual address comes at checkout)
+    const subtotal = this.getTotalPrice();
+    this.orderSummary = this.pricingService.calculateOrderSummary(subtotal, 'Rajasthan');
   }
 
   updateQuantity(itemId: number, quantity: number): void {
@@ -44,9 +64,10 @@ export class CartComponent implements OnInit {
     this.cartService.updateCartItem(itemId, quantity).subscribe({
       next: (updatedCart) => {
         this.cart = updatedCart;
+        this.calculateOrderSummary();
       },
       error: (error) => {
-        alert('Failed to update quantity');
+        this.toastService.error('Failed to update quantity');
       }
     });
   }
@@ -55,21 +76,32 @@ export class CartComponent implements OnInit {
     this.cartService.removeFromCart(itemId).subscribe({
       next: (updatedCart) => {
         this.cart = updatedCart;
+        this.calculateOrderSummary();
+        this.toastService.info('Item removed from cart');
       },
       error: (error) => {
-        alert('Failed to remove item');
+        this.toastService.error('Failed to remove item');
       }
     });
   }
 
-  clearCart(): void {
-    if (confirm('Are you sure you want to clear your cart?')) {
+  async clearCart(): Promise<void> {
+    const confirmed = await this.toastService.confirm({
+      title: 'Clear Cart',
+      message: 'Are you sure you want to remove all items from your cart?',
+      confirmText: 'Clear All',
+      cancelText: 'Keep Items'
+    });
+
+    if (confirmed) {
       this.cartService.clearCart().subscribe({
         next: () => {
           this.cart = { ...this.cart!, cartItems: [] };
+          this.orderSummary = null;
+          this.toastService.success('Cart cleared successfully');
         },
         error: (error) => {
-          alert('Failed to clear cart');
+          this.toastService.error('Failed to clear cart');
         }
       });
     }
@@ -88,5 +120,13 @@ export class CartComponent implements OnInit {
 
   proceedToCheckout(): void {
     this.router.navigate(['/checkout']);
+  }
+
+  getFreeDeliveryThreshold(): number {
+    return this.pricingService.getFreeDeliveryThreshold();
+  }
+
+  getAmountToFreeDelivery(): number {
+    return Math.max(0, this.getFreeDeliveryThreshold() - this.getTotalPrice());
   }
 }

@@ -11,7 +11,7 @@
         </div>
 
         <div class="profile-content" *ngIf="!isLoading">
-            <!-- Success/Error Toasts -->
+            <!-- Success/Error Toasts (hidden now using toast service) -->
             <div class="toast toast-success" *ngIf="successMessage">
                 {{ successMessage }}
             </div>
@@ -72,12 +72,18 @@
 
                     <div class="form-row three-col">
                         <div class="form-group">
-                            <label>City</label>
-                            <input type="text" formControlName="city">
+                            <label>State</label>
+                            <select formControlName="state">
+                                <option value="">Select State</option>
+                                <option *ngFor="let state of states" [value]="state.name">{{ state.name }}</option>
+                            </select>
                         </div>
                         <div class="form-group">
-                            <label>State</label>
-                            <input type="text" formControlName="state">
+                            <label>City</label>
+                            <select formControlName="city" [disabled]="!cities.length">
+                                <option value="">Select City</option>
+                                <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Pincode</label>

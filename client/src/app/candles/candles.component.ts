@@ -1,20 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CandleService, Candle, CandleImage } from '../services/candle.service';
-import { CartService } from '../services/cart.service';
-import { WishlistService } from '../services/wishlist.service';
+import { CartService, Cart, CartItem } from '../services/cart.service';
+import { WishlistService, Wishlist } from '../services/wishlist.service';
 import { AuthService } from '../services/auth.service';
+import { ToastService } from '../services/toast.service';
 import { Router } from '@angular/router';
-import { CommonModule, NgIf, NgFor } from '@angular/common';
+import { CommonModule, NgIf, NgFor, JsonPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-candles',
   templateUrl: './candles.component.html',
   styleUrls: ['./candles.component.scss'],
   standalone: true,
-  imports: [CommonModule, NgIf, NgFor, FormsModule]
+  imports: [CommonModule, NgIf, NgFor, FormsModule, JsonPipe]
 })
-export class CandlesComponent implements OnInit {
+export class CandlesComponent implements OnInit, OnDestroy {
   candles: Candle[] = [];
   filteredCandles: Candle[] = [];
   paginatedCandles: Candle[] = [];
@@ -24,27 +26,52 @@ export class CandlesComponent implements OnInit {
   // Filter and Sort properties
   searchQuery: string = '';
   sortBy: string = 'name-asc';
+  priceRange: { min: number; max: number } = { min: 0, max: 10000 };
+  showAvailableOnly: boolean = false;
 
   // Pagination properties
   currentPage: number = 1;
   itemsPerPage: number = 12;
   totalPages: number = 1;
 
+  // Cart tracking
+  cartItems: Map<number, CartItem> = new Map();
+  updatingCart: Set<number> = new Set();
+
+  // Wishlist tracking
+  wishlistItemIds: Set<number> = new Set();
+  updatingWishlist: Set<number> = new Set();
+
+  private subscriptions: Subscription[] = [];
+
   constructor(
     private candleService: CandleService,
     private cartService: CartService,
     private wishlistService: WishlistService,
     private authService: AuthService,
+    private toastService: ToastService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
     this.loadCandles();
+    // Always try to load cart if user is logged in
+    if (this.isLoggedIn()) {
+      console.log('User is logged in, loading cart and wishlist...');
+      this.loadCart();
+      this.loadWishlist();
+    } else {
+      console.log('User is not logged in');
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   loadCandles(): void {
     this.isLoading = true;
-    this.candleService.getAllCandles().subscribe({
+    const sub = this.candleService.getAllCandles().subscribe({
       next: (data) => {
         this.candles = data;
         this.applyFilters();
@@ -55,8 +82,204 @@ export class CandlesComponent implements OnInit {
         this.isLoading = false;
       }
     });
+    this.subscriptions.push(sub);
   }
 
+  loadCart(): void {
+    console.log('Loading cart...');
+    const sub = this.cartService.getCart().subscribe({
+      next: (cart) => {
+        console.log('Cart loaded:', cart);
+        this.cartItems.clear();
+        if (cart?.cartItems) {
+          cart.cartItems.forEach(item => {
+            console.log(`Adding cart item: candle ${item.candle.id}, quantity ${item.quantity}`);
+            this.cartItems.set(item.candle.id, item);
+          });
+        }
+        console.log('Final cartItems map:', this.cartItems);
+      },
+      error: (error) => {
+        console.error('Failed to load cart:', error);
+      } // Silently fail
+    });
+    this.subscriptions.push(sub);
+  }
+
+  loadWishlist(): void {
+    const sub = this.wishlistService.getWishlist().subscribe({
+      next: (wishlist) => {
+        this.wishlistItemIds.clear();
+        if (wishlist?.wishlistItems) {
+          wishlist.wishlistItems.forEach(item => {
+            this.wishlistItemIds.add(item.candle.id);
+          });
+        }
+      },
+      error: () => { } // Silently fail
+    });
+    this.subscriptions.push(sub);
+  }
+
+  // Cart methods
+  getCartQuantity(candleId: number): number {
+    const item = this.cartItems.get(candleId);
+    const quantity = item ? item.quantity : 0;
+    console.log(`Getting cart quantity for candle ${candleId}: ${quantity}`, item);
+    return quantity;
+  }
+
+  isInCart(candleId: number): boolean {
+    return this.cartItems.has(candleId);
+  }
+
+  addToCart(candle: Candle): void {
+    if (!this.authService.isLoggedIn()) {
+      this.toastService.warning('Please login to add items to cart');
+      return;
+    }
+
+    this.updatingCart.add(candle.id);
+    this.cartService.addToCart(candle.id, 1).subscribe({
+      next: (cart) => {
+        this.updateCartFromResponse(cart);
+        this.toastService.success('Added to cart!');
+        this.updatingCart.delete(candle.id);
+      },
+      error: (error) => {
+        this.toastService.error('Failed to add to cart');
+        this.updatingCart.delete(candle.id);
+      }
+    });
+  }
+
+  updateQuantity(candle: Candle, delta: number): void {
+    const currentItem = this.cartItems.get(candle.id);
+    if (!currentItem) return;
+
+    const newQuantity = currentItem.quantity + delta;
+
+    if (newQuantity <= 0) {
+      this.removeFromCart(candle);
+      return;
+    }
+
+    if (newQuantity > candle.stockQuantity) {
+      this.toastService.warning('Maximum stock reached');
+      return;
+    }
+
+    this.updatingCart.add(candle.id);
+    this.cartService.updateCartItem(currentItem.id, newQuantity).subscribe({
+      next: (cart) => {
+        this.updateCartFromResponse(cart);
+        this.updatingCart.delete(candle.id);
+      },
+      error: () => {
+        this.toastService.error('Failed to update quantity');
+        this.updatingCart.delete(candle.id);
+      }
+    });
+  }
+
+  removeFromCart(candle: Candle): void {
+    const currentItem = this.cartItems.get(candle.id);
+    if (!currentItem) return;
+
+    this.updatingCart.add(candle.id);
+    this.cartService.removeFromCart(currentItem.id).subscribe({
+      next: (cart) => {
+        this.updateCartFromResponse(cart);
+        this.toastService.info('Removed from cart');
+        this.updatingCart.delete(candle.id);
+      },
+      error: () => {
+        this.toastService.error('Failed to remove from cart');
+        this.updatingCart.delete(candle.id);
+      }
+    });
+  }
+
+  private updateCartFromResponse(cart: Cart): void {
+    console.log('Updating cart from response:', cart);
+    this.cartItems.clear();
+    if (cart?.cartItems) {
+      cart.cartItems.forEach(item => {
+        console.log(`Updating cart item: candle ${item.candle.id}, quantity ${item.quantity}`);
+        this.cartItems.set(item.candle.id, item);
+      });
+    }
+    console.log('Cart updated. New cartItems map:', this.cartItems);
+  }
+
+  isUpdatingCart(candleId: number): boolean {
+    return this.updatingCart.has(candleId);
+  }
+
+  // Public method to refresh cart data
+  refreshCart(): void {
+    if (this.isLoggedIn()) {
+      console.log('Manually refreshing cart...');
+      this.loadCart();
+    }
+  }
+
+  // Wishlist methods
+  isInWishlist(candleId: number): boolean {
+    return this.wishlistItemIds.has(candleId);
+  }
+
+  toggleWishlist(candle: Candle, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (!this.authService.isLoggedIn()) {
+      this.toastService.warning('Please login to manage wishlist');
+      return;
+    }
+
+    this.updatingWishlist.add(candle.id);
+
+    if (this.isInWishlist(candle.id)) {
+      // Need to find the wishlist item ID to remove
+      this.wishlistService.getWishlist().subscribe({
+        next: (wishlist) => {
+          const item = wishlist.wishlistItems.find(i => i.candle.id === candle.id);
+          if (item) {
+            this.wishlistService.removeFromWishlist(item.id).subscribe({
+              next: () => {
+                this.wishlistItemIds.delete(candle.id);
+                this.toastService.info('Removed from wishlist');
+                this.updatingWishlist.delete(candle.id);
+              },
+              error: () => {
+                this.toastService.error('Failed to remove from wishlist');
+                this.updatingWishlist.delete(candle.id);
+              }
+            });
+          }
+        }
+      });
+    } else {
+      this.wishlistService.addToWishlist(candle.id).subscribe({
+        next: () => {
+          this.wishlistItemIds.add(candle.id);
+          this.toastService.success('Added to wishlist!');
+          this.updatingWishlist.delete(candle.id);
+        },
+        error: () => {
+          this.toastService.error('Failed to add to wishlist');
+          this.updatingWishlist.delete(candle.id);
+        }
+      });
+    }
+  }
+
+  isUpdatingWishlist(candleId: number): boolean {
+    return this.updatingWishlist.has(candleId);
+  }
+
+  // Search and Filter methods
   onSearch(): void {
     this.currentPage = 1;
     this.applyFilters();
@@ -67,9 +290,9 @@ export class CandlesComponent implements OnInit {
   }
 
   applyFilters(): void {
-    // 1. Filter
-    let tempCandles = this.candles;
+    let tempCandles = [...this.candles]; // Create a copy to avoid mutation
 
+    // 1. Search filter
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase().trim();
       tempCandles = tempCandles.filter(candle =>
@@ -78,14 +301,25 @@ export class CandlesComponent implements OnInit {
       );
     }
 
-    // 2. Sort
-    tempCandles = this.sortCandles(tempCandles);
+    // 2. Price range filter
+    tempCandles = tempCandles.filter(candle =>
+      candle.price >= this.priceRange.min && candle.price <= this.priceRange.max
+    );
 
-    this.filteredCandles = tempCandles;
+    // 3. Availability filter
+    if (this.showAvailableOnly) {
+      tempCandles = tempCandles.filter(candle =>
+        candle.available && candle.stockQuantity > 0
+      );
+    }
 
-    // 3. Paginate
+    // 4. Sort - create new array to avoid mutation
+    this.filteredCandles = this.sortCandles([...tempCandles]);
+
+    // 5. Paginate
     this.totalPages = Math.ceil(this.filteredCandles.length / this.itemsPerPage);
     if (this.totalPages === 0) this.totalPages = 1;
+    if (this.currentPage > this.totalPages) this.currentPage = 1;
     this.updatePagination();
   }
 
@@ -101,7 +335,7 @@ export class CandlesComponent implements OnInit {
         case 'name-desc':
           return b.name.localeCompare(a.name);
         case 'newest':
-          return b.id - a.id; // Assuming higher ID means newer
+          return b.id - a.id;
         default:
           return 0;
       }
@@ -157,38 +391,6 @@ export class CandlesComponent implements OnInit {
     return this.getImageUrl(image);
   }
 
-  addToCart(candle: Candle): void {
-    if (!this.authService.isLoggedIn()) {
-      alert('Please login to add items to cart');
-      return;
-    }
-
-    this.cartService.addToCart(candle.id, 1).subscribe({
-      next: () => {
-        alert('Added to cart successfully!');
-      },
-      error: (error) => {
-        alert('Failed to add to cart: ' + error.message);
-      }
-    });
-  }
-
-  addToWishlist(candle: Candle): void {
-    if (!this.authService.isLoggedIn()) {
-      alert('Please login to add items to wishlist');
-      return;
-    }
-
-    this.wishlistService.addToWishlist(candle.id).subscribe({
-      next: () => {
-        alert('Added to wishlist successfully!');
-      },
-      error: (error) => {
-        alert('Failed to add to wishlist');
-      }
-    });
-  }
-
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
   }
@@ -198,12 +400,10 @@ export class CandlesComponent implements OnInit {
       return '/assets/default-candle.jpg';
     }
 
-    // If image has base64 data, use it directly
     if (image.imageData) {
       return image.imageData;
     }
 
-    // Fallback to API endpoint if no base64 data
     return `http://localhost:8081/api/candles/images/${image.id}`;
   }
 

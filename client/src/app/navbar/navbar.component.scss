@@ -17,11 +17,13 @@
   }
 }
 
-.nav-container {
+.nav-container-full {
   height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 var(--space-lg);
+  width: 100%;
 }
 
 /* Brand */
@@ -100,6 +102,111 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+/* Dropdown Styles */
+.dropdown-container {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  &:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-arrow {
+  font-size: 0.7rem;
+  margin-left: 6px;
+  opacity: 0.7;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 200px;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-secondary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+  z-index: 100;
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--bg-secondary);
+      color: var(--primary-color);
+    }
+
+    .icon {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+  }
+
+  .dropdown-divider {
+    height: 1px;
+    background: var(--bg-secondary);
+    margin: 6px 0;
+  }
+
+  .logout-item {
+    color: #e57373;
+
+    &:hover {
+      background: rgba(229, 115, 115, 0.1);
+    }
+  }
+}
+
+.user-avatar {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+.logout-btn {
+  display: none;
+  /* Hidden on desktop, handled by dropdown */
+}
+
+.profile-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  transition: background 0.2s;
+
+  &:hover {
+    background: var(--bg-secondary);
+  }
 }
 
 .cart-link {

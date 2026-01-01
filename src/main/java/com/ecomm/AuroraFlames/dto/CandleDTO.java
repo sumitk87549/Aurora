@@ -18,5 +18,6 @@ public class CandleDTO {
     private boolean available;
     private Boolean creatorsChoice;
     private String creatorsText;
+    private Boolean featured;
     private List<CandleImageDTO> images;
 }
