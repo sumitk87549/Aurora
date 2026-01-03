@@ -19,5 +19,8 @@ public class CandleDTO {
     private Boolean creatorsChoice;
     private String creatorsText;
     private Boolean featured;
+    private String category;
+    private String fragrance;
+    private String color;
     private List<CandleImageDTO> images;
 }

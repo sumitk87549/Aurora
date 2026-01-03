@@ -56,6 +56,14 @@ public class CandleService {
         return candles;
     }
 
+    // Get candles by category (for variant switching)
+    public List<Candle> getCandlesByCategory(String category) {
+        List<Candle> candles = candleRepository.findByCategoryAndAvailableTrue(category);
+        // Force load images to avoid lazy loading issues
+        candles.forEach(candle -> candle.getImages().size());
+        return candles;
+    }
+
     public Candle saveCandle(Candle candle) {
         return candleRepository.save(candle);
     }

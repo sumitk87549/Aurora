@@ -77,4 +77,11 @@ public class CandleController {
         List<CandleDTO> candleDTOs = dtoMapper.toCandleDTOList(candles);
         return ResponseEntity.ok(candleDTOs);
     }
+
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<CandleDTO>> getCandlesByCategory(@PathVariable String category) {
+        List<Candle> candles = candleService.getCandlesByCategory(category);
+        List<CandleDTO> candleDTOs = dtoMapper.toCandleDTOList(candles);
+        return ResponseEntity.ok(candleDTOs);
+    }
 }

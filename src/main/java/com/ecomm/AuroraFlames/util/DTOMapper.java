@@ -35,6 +35,9 @@ public class DTOMapper {
         dto.setCreatorsChoice(candle.getCreatorsChoice());
         dto.setCreatorsText(candle.getCreatorsText());
         dto.setFeatured(candle.getFeatured());
+        dto.setCategory(candle.getCategory());
+        dto.setFragrance(candle.getFragrance());
+        dto.setColor(candle.getColor());
 
         if (candle.getImages() != null) {
             List<CandleImageDTO> imageDTOs = candle.getImages().stream()
@@ -55,7 +58,7 @@ public class DTOMapper {
 
         // Don't send imageData in DTO - images should be accessed via URL
         // This prevents large payloads and performance issues
-        
+
         return dto;
     }
 

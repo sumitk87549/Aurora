@@ -43,7 +43,7 @@
   transition: background-color var(--transition-theme), box-shadow var(--transition-theme);
   border: 1px solid var(--border-light);
 
-  @media (max-width: 768px) {
+  @media (max-width: 991.98px) {
     flex-direction: column;
     align-items: stretch;
   }
@@ -58,7 +58,7 @@
   flex: 1;
   max-width: 400px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 991.98px) {
     max-width: 100%;
   }
 }

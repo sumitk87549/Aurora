@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, NgIf, NgFor, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CandleService, Candle, CandleImage } from '../../services/candle.service';
 import { CartService, Cart, CartItem } from '../../services/cart.service';
 import { WishlistService } from '../../services/wishlist.service';
@@ -13,7 +14,7 @@ import { API_URL } from '../../config/api.config';
 @Component({
   selector: 'app-candle-detail',
   standalone: true,
-  imports: [CommonModule, NgIf, NgFor, RouterLink, CurrencyPipe],
+  imports: [CommonModule, NgIf, NgFor, RouterLink, CurrencyPipe, FormsModule],
   templateUrl: './candle-detail.component.html',
   styleUrl: './candle-detail.component.scss'
 })
@@ -37,6 +38,13 @@ export class CandleDetailComponent implements OnInit, OnDestroy {
   zoomX: number = 0;
   zoomY: number = 0;
 
+  // Variant Switcher (Amazon-like)
+  categoryCandles: Candle[] = [];
+  availableFragrances: string[] = [];
+  availableColors: string[] = [];
+  selectedFragrance: string = '';
+  selectedColor: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -59,12 +67,17 @@ export class CandleDetailComponent implements OnInit, OnDestroy {
 
   loadCandle(id: number): void {
     this.isLoading = true;
+    this.currentImageIndex = 0; // Reset image carousel
     this.candleService.getCandleById(id).subscribe({
       next: (data) => {
         this.candle = data;
         this.isLoading = false;
         this.checkCartStatus();
         this.checkWishlistStatus();
+        // Load category siblings for variant switching
+        if (data.category) {
+          this.loadCategorySiblings(data.category);
+        }
       },
       error: (error) => {
         this.errorMessage = 'Failed to load candle parameters';
@@ -303,6 +316,84 @@ export class CandleDetailComponent implements OnInit, OnDestroy {
     if (touch) {
       this.zoomX = ((touch.clientX - rect.left) / rect.width) * 100;
       this.zoomY = ((touch.clientY - rect.top) / rect.height) * 100;
+    }
+  }
+
+  // Variant Switcher Logic
+  loadCategorySiblings(category: string): void {
+    this.candleService.getCandlesByCategory(category).subscribe({
+      next: (candles) => {
+        this.categoryCandles = candles;
+
+        // Extract unique fragrances and colors
+        const fragrances = new Set<string>();
+        const colors = new Set<string>();
+
+        candles.forEach(c => {
+          if (c.fragrance) fragrances.add(c.fragrance);
+          if (c.color) colors.add(c.color);
+        });
+
+        this.availableFragrances = Array.from(fragrances).sort();
+        this.availableColors = Array.from(colors).sort();
+
+        // Set current selections
+        this.selectedFragrance = this.candle?.fragrance || '';
+        this.selectedColor = this.candle?.color || '';
+      },
+      error: (err) => {
+        console.error('Failed to load category siblings:', err);
+      }
+    });
+  }
+
+  onVariantChange(): void {
+    console.log('onVariantChange called');
+    console.log('Selected Fragrance:', this.selectedFragrance);
+    console.log('Selected Color:', this.selectedColor);
+    console.log('Category Candles:', this.categoryCandles);
+
+    if (!this.categoryCandles || this.categoryCandles.length === 0) {
+      console.log('No category candles available');
+      return;
+    }
+
+    // Find a matching candle in priority order:
+    // 1. Exact match (both fragrance AND color)
+    // 2. Fragrance match only
+    // 3. Color match only
+    let matchingCandle: Candle | undefined;
+
+    // Try exact match first (if both are selected)
+    if (this.selectedFragrance && this.selectedColor) {
+      matchingCandle = this.categoryCandles.find(c =>
+        c.fragrance === this.selectedFragrance && c.color === this.selectedColor
+      );
+      console.log('Exact match result:', matchingCandle);
+    }
+
+    // If no exact match, try fragrance only
+    if (!matchingCandle && this.selectedFragrance) {
+      matchingCandle = this.categoryCandles.find(c =>
+        c.fragrance === this.selectedFragrance && c.id !== this.candle?.id
+      );
+      console.log('Fragrance match result:', matchingCandle);
+    }
+
+    // If still no match, try color only
+    if (!matchingCandle && this.selectedColor) {
+      matchingCandle = this.categoryCandles.find(c =>
+        c.color === this.selectedColor && c.id !== this.candle?.id
+      );
+      console.log('Color match result:', matchingCandle);
+    }
+
+    if (matchingCandle && matchingCandle.id !== this.candle?.id) {
+      console.log('Navigating to candle:', matchingCandle.id);
+      // Navigate to the matching candle's page
+      this.router.navigate(['/candles', matchingCandle.id]);
+    } else {
+      console.log('No different matching candle found');
     }
   }
 }

@@ -392,7 +392,8 @@
 }
 
 /* ==================== RESPONSIVE ==================== */
-@media (max-width: 768px) {
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 991.98px) {
   .hero-content {
     text-align: center;
     margin: 0 auto;
@@ -407,7 +408,15 @@
   }
 
   .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+    /* Force 2 columns on tablet */
+  }
+}
+
+@media (max-width: 576px) {
+  .grid-3 {
     grid-template-columns: 1fr;
+    /* 1 column on mobile */
   }
 }
 

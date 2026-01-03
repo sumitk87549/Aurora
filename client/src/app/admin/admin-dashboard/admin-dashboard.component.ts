@@ -24,6 +24,11 @@ interface DashboardStats {
   imports: [CommonModule, NgIf, NgFor, FormsModule]
 })
 export class AdminDashboardComponent implements OnInit {
+  // Constants for dropdowns
+  readonly CATEGORIES = ['Love', 'Christmas', 'Relaxation', 'Spa', 'Seasonal', 'Floral', 'Other'];
+  readonly FRAGRANCES = ['Lavender', 'Vanilla', 'Cinnamon', 'Rose', 'Ocean Breeze', 'Forest Pine', 'Jasmine', 'Sandalwood', 'Citrus', 'Other'];
+  readonly COLORS = ['White', 'Ivory', 'Red', 'Gold', 'Pink', 'Blue', 'Green', 'Purple', 'Black', 'Other'];
+
   candles: Candle[] = [];
   orders: Order[] = [];
   stats: DashboardStats = {
@@ -50,7 +55,10 @@ export class AdminDashboardComponent implements OnInit {
     available: true,
     creatorsChoice: false,
     creatorsText: '',
-    featured: false
+    featured: false,
+    category: '',
+    fragrance: '',
+    color: ''
   };
 
   isEditing: boolean = false;
@@ -323,7 +331,10 @@ export class AdminDashboardComponent implements OnInit {
       available: true,
       creatorsChoice: false,
       creatorsText: '',
-      featured: false
+      featured: false,
+      category: '',
+      fragrance: '',
+      color: ''
     };
     this.selectedImages = [];
   }

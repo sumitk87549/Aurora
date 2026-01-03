@@ -70,6 +70,33 @@
                     </span>
                 </div>
 
+                <!-- Variant Selector (Amazon-like) -->
+                <div class="variant-selector"
+                    *ngIf="categoryCandles.length > 1 && (availableFragrances.length > 1 || availableColors.length > 1)">
+                    <h4 class="variant-title">Choose Your Variant</h4>
+
+                    <div class="variant-options">
+                        <div class="variant-group" *ngIf="availableFragrances.length > 1">
+                            <label class="variant-label">Fragrance</label>
+                            <select class="variant-select" [(ngModel)]="selectedFragrance" (change)="onVariantChange()">
+                                <option *ngFor="let frag of availableFragrances" [value]="frag">{{ frag }}</option>
+                            </select>
+                        </div>
+
+                        <div class="variant-group" *ngIf="availableColors.length > 1">
+                            <label class="variant-label">Color</label>
+                            <select class="variant-select" [(ngModel)]="selectedColor" (change)="onVariantChange()">
+                                <option *ngFor="let col of availableColors" [value]="col">{{ col }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <p class="variant-hint">
+                        <span class="hint-icon">💡</span>
+                        Selecting a different option will show you a related candle in this collection.
+                    </p>
+                </div>
+
                 <div class="creators-note" *ngIf="candle.creatorsChoice && candle.creatorsText">
                     <div class="note-icon">✨</div>
                     <p class="note-text">"{{ candle.creatorsText }}" <br> <span class="author">- From the Creator</span>

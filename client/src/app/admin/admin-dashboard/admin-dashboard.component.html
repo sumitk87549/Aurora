@@ -239,6 +239,32 @@
                 name="stock" required>
             </div>
 
+            <div class="form-group">
+              <label>Category</label>
+              <select [(ngModel)]="isEditing && editingCandle ? editingCandle.category : newCandle.category"
+                name="category">
+                <option value="">-- Select Category --</option>
+                <option *ngFor="let cat of CATEGORIES" [value]="cat">{{ cat }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Fragrance</label>
+              <select [(ngModel)]="isEditing && editingCandle ? editingCandle.fragrance : newCandle.fragrance"
+                name="fragrance">
+                <option value="">-- Select Fragrance --</option>
+                <option *ngFor="let frag of FRAGRANCES" [value]="frag">{{ frag }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Color</label>
+              <select [(ngModel)]="isEditing && editingCandle ? editingCandle.color : newCandle.color" name="color">
+                <option value="">-- Select Color --</option>
+                <option *ngFor="let col of COLORS" [value]="col">{{ col }}</option>
+              </select>
+            </div>
+
             <div class="form-group check-group">
               <label class="checkbox-label">
                 <input type="checkbox"

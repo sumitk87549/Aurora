@@ -56,7 +56,7 @@
     grid-template-columns: 1fr 1fr;
     gap: var(--space-3xl);
 
-    @media (max-width: 768px) {
+    @media (max-width: 991.98px) {
         grid-template-columns: 1fr;
         gap: var(--space-xl);
     }
@@ -125,13 +125,13 @@
     z-index: 100;
     background-color: white;
 
-    @media (max-width: 768px) {
+    @media (max-width: 991.98px) {
         display: none;
     }
 }
 
 // Mobile zoom effect - zoom in place
-@media (max-width: 768px) {
+@media (max-width: 991.98px) {
     .main-image-container.zooming {
         .main-image {
             transform: scale(2);
@@ -161,7 +161,7 @@
         font-size: 14px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 991.98px) {
         bottom: 10px;
         right: 10px;
         font-size: 11px;
@@ -463,5 +463,134 @@
         font-weight: 700;
         width: 40px;
         text-align: center;
+    }
+}
+
+/* ==================== VARIANT SELECTOR (Amazon-like) ==================== */
+.variant-selector {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    margin: var(--space-lg) 0;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-light);
+    }
+}
+
+.variant-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: var(--space-md);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &::before {
+        content: '🔄';
+        font-size: 1rem;
+    }
+}
+
+.variant-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.variant-group {
+    flex: 1;
+    min-width: 150px;
+}
+
+.variant-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.variant-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+
+    &:hover {
+        border-color: var(--primary-color);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.15);
+    }
+}
+
+.variant-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--space-md);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+
+    .hint-icon {
+        font-size: 1rem;
+    }
+}
+
+/* Dark Mode Enhancements */
+[data-theme="dark"] {
+    .variant-selector {
+        background: var(--bg-card);
+        border-color: var(--border-color);
+
+        &:hover {
+            border-color: var(--accent-gold);
+            box-shadow: var(--shadow-md), 0 0 20px rgba(255, 180, 50, 0.1);
+        }
+    }
+
+    .variant-title {
+        color: var(--accent-gold);
+    }
+
+    .variant-select {
+        background: var(--bg-tertiary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23D4AF37' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+
+        &:hover,
+        &:focus {
+            border-color: var(--accent-gold);
+        }
+    }
+
+    .variant-hint {
+        background: var(--bg-tertiary);
     }
 }

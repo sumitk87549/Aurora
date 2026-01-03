@@ -21,7 +21,7 @@
   gap: var(--space-xl);
   align-items: start;
 
-  @media (max-width: 900px) {
+  @media (max-width: 991.98px) {
     grid-template-columns: 1fr;
   }
 }
@@ -48,7 +48,7 @@
     border-bottom: none;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 991.98px) {
     grid-template-columns: 80px 1fr auto;
     padding: var(--space-md) 0;
   }
@@ -318,7 +318,7 @@
   justify-content: center;
   min-height: 400px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 991.98px) {
     min-height: 300px;
     padding: var(--space-2xl) var(--space-md);
   }

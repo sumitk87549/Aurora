@@ -13,6 +13,9 @@ export interface Candle {
   creatorsChoice?: boolean;
   creatorsText?: string;
   featured?: boolean;
+  category?: string;
+  fragrance?: string;
+  color?: string;
   images?: CandleImage[];
 }
 
@@ -59,5 +62,9 @@ export class CandleService {
 
   getFeaturedCandles(): Observable<Candle[]> {
     return this.http.get<Candle[]>(`${this.apiUrl}/featured`);
+  }
+
+  getCandlesByCategory(category: string): Observable<Candle[]> {
+    return this.http.get<Candle[]>(`${this.apiUrl}/category/${category}`);
   }
 }

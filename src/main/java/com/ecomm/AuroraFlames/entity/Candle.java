@@ -42,6 +42,15 @@ public class Candle {
     @Column(nullable = true)
     private Boolean featured = false;
 
+    @Column(nullable = true)
+    private String category; // e.g., "Love", "Christmas", "Relaxation", "Spa", "Seasonal"
+
+    @Column(nullable = true)
+    private String fragrance; // e.g., "Lavender", "Vanilla", "Rose"
+
+    @Column(nullable = true)
+    private String color; // e.g., "White", "Red", "Gold"
+
     @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties({ "candle" })
     private List<CandleImage> images;

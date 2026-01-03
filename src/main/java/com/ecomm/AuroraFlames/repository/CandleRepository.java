@@ -13,4 +13,6 @@ public interface CandleRepository extends JpaRepository<Candle, Long> {
     List<Candle> findByNameContainingIgnoreCase(String name);
 
     List<Candle> findByFeaturedTrueAndAvailableTrue();
+
+    List<Candle> findByCategoryAndAvailableTrue(String category);
 }
