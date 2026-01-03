@@ -12,16 +12,18 @@
   <div class="wishlist-content" *ngIf="!isLoading && !errorMessage">
     <div class="wishlist-items" *ngIf="wishlist && wishlist.wishlistItems.length > 0">
       <div class="wishlist-item" *ngFor="let item of wishlist.wishlistItems">
-        <div class="item-image" *ngIf="item && item.candle && item.candle.images && item.candle.images.length > 0">
-          <img [src]="getImageUrl(item.candle.images[0])" [alt]="item.candle.name"
-            onerror="this.src='/assets/default-candle.jpg'" />
-        </div>
+        <div class="item-clickable-area" (click)="navigateToCandleDetail(item.candle.id)">
+          <div class="item-image" *ngIf="item && item.candle && item.candle.images && item.candle.images.length > 0">
+            <img [src]="getImageUrl(item.candle.images[0])" [alt]="item.candle.name"
+              onerror="this.src='/assets/default-candle.jpg'" />
+          </div>
 
-        <div class="item-info" *ngIf="item && item.candle">
-          <h3>{{ item.candle.name || 'Unknown Product' }}</h3>
-          <!-- <p class="item-description">{{ item.candle.description || 'No description available' }}</p> -->
-          <p class="item-price">₹{{ item.candle.price || 0 }}</p>
-          <p class="item-date">Added on {{ formatDate(item.addedAt) }}</p>
+          <div class="item-info" *ngIf="item && item.candle">
+            <h3>{{ item.candle.name || 'Unknown Product' }}</h3>
+            <!-- <p class="item-description">{{ item.candle.description || 'No description available' }}</p> -->
+            <p class="item-price">₹{{ item.candle.price || 0 }}</p>
+            <p class="item-date">Added on {{ formatDate(item.addedAt) }}</p>
+          </div>
         </div>
 
         <div class="item-actions" *ngIf="item && item.candle">

@@ -4,6 +4,8 @@ import { API_URL } from '../config/api.config';
 import { CartService } from '../services/cart.service';
 import { CommonModule } from '@angular/common';
 import { CandleImage } from '../services/candle.service';
+import { Router } from '@angular/router';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-wishlist',
@@ -19,7 +21,9 @@ export class WishlistComponent implements OnInit {
 
   constructor(
     private wishlistService: WishlistService,
-    private cartService: CartService
+    private cartService: CartService,
+    private router: Router,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -44,9 +48,10 @@ export class WishlistComponent implements OnInit {
     this.wishlistService.removeFromWishlist(itemId).subscribe({
       next: (updatedWishlist) => {
         this.wishlist = updatedWishlist;
+        this.toastService.success('Item removed from wishlist');
       },
       error: (error) => {
-        alert('Failed to remove from wishlist');
+        this.toastService.error('Failed to remove from wishlist');
       }
     });
   }
@@ -54,10 +59,10 @@ export class WishlistComponent implements OnInit {
   addToCart(candleId: number): void {
     this.cartService.addToCart(candleId, 1).subscribe({
       next: () => {
-        alert('Added to cart successfully!');
+        this.toastService.success('Added to cart successfully!');
       },
       error: (error) => {
-        alert('Failed to add to cart');
+        this.toastService.error('Failed to add to cart');
       }
     });
   }
@@ -78,5 +83,9 @@ export class WishlistComponent implements OnInit {
 
     // Fallback to API endpoint if no base64 data
     return `${API_URL}/candles/images/${image.id}`;
+  }
+
+  navigateToCandleDetail(candleId: number): void {
+    this.router.navigate(['/candles', candleId]);
   }
 }
