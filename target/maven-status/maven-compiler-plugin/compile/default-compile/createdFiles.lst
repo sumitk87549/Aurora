@@ -12,6 +12,7 @@ com/ecomm/AuroraFlames/config/SecurityConfig.class
 com/ecomm/AuroraFlames/controller/CartController.class
 com/ecomm/AuroraFlames/dto/RegisterRequest.class
 com/ecomm/AuroraFlames/service/WishlistService.class
+com/ecomm/AuroraFlames/controller/SpaController.class
 com/ecomm/AuroraFlames/dto/RazorpayOrderResponse.class
 com/ecomm/AuroraFlames/service/CartService.class
 com/ecomm/AuroraFlames/entity/OrderItem.class
@@ -21,6 +22,7 @@ com/ecomm/AuroraFlames/entity/CandleImage.class
 com/ecomm/AuroraFlames/config/DataInitializer.class
 com/ecomm/AuroraFlames/dto/WishlistItemDTO.class
 com/ecomm/AuroraFlames/repository/CandleImageRepository.class
+com/ecomm/AuroraFlames/config/GlobalExceptionHandler.class
 com/ecomm/AuroraFlames/dto/DashboardStats.class
 com/ecomm/AuroraFlames/repository/CartRepository.class
 com/ecomm/AuroraFlames/controller/CandleController.class
@@ -55,3 +57,4 @@ com/ecomm/AuroraFlames/repository/WishlistItemRepository.class
 com/ecomm/AuroraFlames/dto/WishlistDTO.class
 com/ecomm/AuroraFlames/repository/UserRepository.class
 com/ecomm/AuroraFlames/service/PaymentService.class
+com/ecomm/AuroraFlames/config/JwtAuthenticationEntryPoint.class

@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 80px;
+  height: 110px;
   background: var(--bg-primary);
   box-shadow: none;
   z-index: 1000;
@@ -137,12 +137,12 @@
   }
 
   .brand-icon {
-    margin-top: 20px;
+    margin-top: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 120px;
-    height: 120px;
+    width: 78px;
+    height: 78px;
 
     .brand-logo {
       width: 100%;

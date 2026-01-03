@@ -52,6 +52,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/candles/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/uploads/**").permitAll()
+                        // Allow static resources for Angular app
+                        .requestMatchers("/", "/index.html", "/assets/**", "/*.js", "/*.css", "/*.ico", "/*.png",
+                                "/*.jpg",
+                                "/*.svg")
+                        .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(point))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
