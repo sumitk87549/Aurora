@@ -1,10 +1,4 @@
 <div class="candles-container">
-  <!-- Debug Section (remove in production) -->
-  <div style="background: #f0f0f0; padding: 10px; margin-bottom: 10px; font-family: monospace; font-size: 12px;">
-    <strong>DEBUG:</strong> Cart Items Count: {{ cartItems.size }} | 
-    Logged In: {{ isLoggedIn() }} | 
-    CartItems Map: {{ cartItems | json }}
-  </div>
 
   <header class="collection-header">
     <h1>Our Premium Candles</h1>
@@ -76,7 +70,8 @@
 
         <div class="card-content" (click)="navigateToCandleDetail(candle)">
           <h3 class="product-title">{{ candle.name }}</h3>
-          <p class="product-description">{{ candle.creatorsText ? (candle.creatorsText | slice:0:100) + (candle.creatorsText.length > 100 ? '...' : '') : '' }}</p>
+          <p class="product-description">{{ candle.creatorsText ? (candle.creatorsText | slice:0:100) +
+            (candle.creatorsText.length > 100 ? '...' : '') : '' }}</p>
 
           <div class="product-footer">
             <div class="product-price">₹{{ candle.price }}</div>
