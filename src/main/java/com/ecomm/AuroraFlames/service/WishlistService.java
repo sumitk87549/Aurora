@@ -23,12 +23,17 @@ public class WishlistService {
     private CandleRepository candleRepository;
 
     public Wishlist getWishlistByUser(User user) {
-        return wishlistRepository.findByUser(user).orElseGet(() -> {
+        Wishlist wishlist = wishlistRepository.findByUser(user).orElseGet(() -> {
             Wishlist newWishlist = new Wishlist();
             newWishlist.setUser(user);
             newWishlist.setWishlistItems(new ArrayList<>());
             return wishlistRepository.save(newWishlist);
         });
+        // Force load wishlist items and their candles with images
+        wishlist.getWishlistItems().forEach(item -> {
+            item.getCandle().getImages().size();
+        });
+        return wishlist;
     }
 
     public Wishlist addToWishlist(User user, Long candleId) {

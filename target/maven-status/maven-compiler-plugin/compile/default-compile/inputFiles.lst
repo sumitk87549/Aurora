@@ -1,5 +1,7 @@
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/AuroraFlamesApplication.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/config/DataInitializer.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/config/GlobalExceptionHandler.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/config/JwtAuthenticationEntryPoint.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/config/JwtAuthenticationFilter.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/config/JwtUtil.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/config/SecurityConfig.java
@@ -16,6 +18,8 @@
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/AuthResponse.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/CandleDTO.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/CandleImageDTO.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/CartDTO.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/CartItemDTO.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/CheckoutRequest.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/DashboardStats.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/dto/OrderDTO.java

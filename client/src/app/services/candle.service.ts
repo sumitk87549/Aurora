@@ -18,6 +18,7 @@ export interface Candle {
 export interface CandleImage {
   id: number;
   imageName: string;
+  imageUrl?: string; // URL to image file
   imageData?: string; // Base64 encoded image data for display
   contentType: string;
 }

@@ -37,7 +37,7 @@ export class ProfileComponent implements OnInit {
       phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
       profileEmoji: ['🕯️'],
       defaultAddress: [''],
-      city: [''],
+      city: [{ value: '', disabled: true }],
       state: [''],
       pincode: ['', Validators.pattern(/^[0-9]{6}$/)]
     });
@@ -53,16 +53,22 @@ export class ProfileComponent implements OnInit {
   }
 
   onStateChange(stateName: string): void {
+    const cityControl = this.profileForm.get('city');
     const state = this.states.find(s => s.name === stateName);
+
     if (state) {
       this.cities = STATE_CITIES[state.code] || [];
+      cityControl?.enable();
+
       // Reset city if current city is not in new list
-      const currentCity = this.profileForm.get('city')?.value;
+      const currentCity = cityControl?.value;
       if (currentCity && !this.cities.includes(currentCity)) {
         this.profileForm.patchValue({ city: '' });
       }
     } else {
       this.cities = [];
+      this.profileForm.patchValue({ city: '' });
+      cityControl?.disable();
     }
   }
 

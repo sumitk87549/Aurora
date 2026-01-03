@@ -31,6 +31,11 @@ export class CandleDetailComponent implements OnInit, OnDestroy {
   isUpdatingWishlist: boolean = false;
   private subscriptions: Subscription[] = [];
 
+  // Image zoom state
+  isZooming: boolean = false;
+  zoomX: number = 0;
+  zoomY: number = 0;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -117,11 +122,22 @@ export class CandleDetailComponent implements OnInit, OnDestroy {
       return '/assets/default-candle.jpg';
     }
 
+    // Priority: imageUrl > imageData > API endpoint
+    if (image.imageUrl) {
+      return image.imageUrl;
+    }
+
     if (image.imageData) {
       return image.imageData;
     }
 
     return `http://localhost:8081/api/candles/images/${image.id}`;
+  }
+
+  handleImageError(event: any): void {
+    event.target.src = '/assets/default-candle.jpg';
+    // Prevent infinite loop if default image also fails
+    event.target.onerror = null;
   }
 
   // Cart Logic
@@ -236,5 +252,50 @@ export class CandleDetailComponent implements OnInit, OnDestroy {
 
   goBack(): void {
     this.location.back();
+  }
+
+  // Image zoom functionality
+  onImageMouseMove(event: MouseEvent): void {
+    const target = event.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+
+    // Calculate position as percentage
+    this.zoomX = ((event.clientX - rect.left) / rect.width) * 100;
+    this.zoomY = ((event.clientY - rect.top) / rect.height) * 100;
+  }
+
+  onImageMouseEnter(): void {
+    this.isZooming = true;
+  }
+
+  onImageMouseLeave(): void {
+    this.isZooming = false;
+  }
+
+  // Touch support for mobile
+  onImageTouchStart(event: TouchEvent): void {
+    this.isZooming = true;
+    this.updateZoomPosition(event);
+  }
+
+  onImageTouchMove(event: TouchEvent): void {
+    if (this.isZooming) {
+      this.updateZoomPosition(event);
+    }
+  }
+
+  onImageTouchEnd(): void {
+    this.isZooming = false;
+  }
+
+  private updateZoomPosition(event: TouchEvent): void {
+    const target = event.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    const touch = event.touches[0];
+
+    if (touch) {
+      this.zoomX = ((touch.clientX - rect.left) / rect.width) * 100;
+      this.zoomY = ((touch.clientY - rect.top) / rect.height) * 100;
+    }
   }
 }

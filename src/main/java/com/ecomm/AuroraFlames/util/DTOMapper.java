@@ -2,12 +2,16 @@ package com.ecomm.AuroraFlames.util;
 
 import com.ecomm.AuroraFlames.dto.CandleDTO;
 import com.ecomm.AuroraFlames.dto.CandleImageDTO;
+import com.ecomm.AuroraFlames.dto.CartDTO;
+import com.ecomm.AuroraFlames.dto.CartItemDTO;
 import com.ecomm.AuroraFlames.dto.OrderDTO;
 import com.ecomm.AuroraFlames.dto.OrderItemDTO;
 import com.ecomm.AuroraFlames.dto.WishlistDTO;
 import com.ecomm.AuroraFlames.dto.WishlistItemDTO;
 import com.ecomm.AuroraFlames.entity.Candle;
 import com.ecomm.AuroraFlames.entity.CandleImage;
+import com.ecomm.AuroraFlames.entity.Cart;
+import com.ecomm.AuroraFlames.entity.CartItem;
 import com.ecomm.AuroraFlames.entity.Order;
 import com.ecomm.AuroraFlames.entity.OrderItem;
 import com.ecomm.AuroraFlames.entity.Wishlist;
@@ -49,14 +53,9 @@ public class DTOMapper {
         dto.setImageUrl(image.getImageUrl());
         dto.setContentType(image.getContentType());
 
-        // Convert byte array to base64 string
-        if (image.getImageData() != null && image.getImageData().length > 0) {
-            String base64Image = java.util.Base64.getEncoder().encodeToString(image.getImageData());
-            // Add data URI prefix based on content type
-            String dataUriPrefix = "data:" + image.getContentType() + ";base64,";
-            dto.setImageData(dataUriPrefix + base64Image);
-        }
-
+        // Don't send imageData in DTO - images should be accessed via URL
+        // This prevents large payloads and performance issues
+        
         return dto;
     }
 
@@ -138,5 +137,28 @@ public class DTOMapper {
         return wishlists.stream()
                 .map(this::toWishlistDTO)
                 .collect(Collectors.toList());
+    }
+
+    public CartDTO toCartDTO(Cart cart) {
+        CartDTO dto = new CartDTO();
+        dto.setId(cart.getId());
+
+        if (cart.getCartItems() != null) {
+            List<CartItemDTO> cartItemDTOs = cart.getCartItems().stream()
+                    .map(this::toCartItemDTO)
+                    .collect(Collectors.toList());
+            dto.setCartItems(cartItemDTOs);
+        }
+
+        return dto;
+    }
+
+    public CartItemDTO toCartItemDTO(CartItem cartItem) {
+        CartItemDTO dto = new CartItemDTO();
+        dto.setId(cartItem.getId());
+        dto.setCandle(toCandleDTO(cartItem.getCandle()));
+        dto.setQuantity(cartItem.getQuantity());
+        dto.setPriceAtTime(cartItem.getPriceAtTime());
+        return dto;
     }
 }

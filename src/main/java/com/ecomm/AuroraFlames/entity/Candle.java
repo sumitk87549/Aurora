@@ -42,16 +42,19 @@ public class Candle {
     @Column(nullable = true)
     private Boolean featured = false;
 
-    @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties({ "candle" })
     private List<CandleImage> images;
 
     @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<CartItem> cartItems;
 
     @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<WishlistItem> wishlistItems;
 
     @OneToMany(mappedBy = "candle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<OrderItem> orderItems;
 }

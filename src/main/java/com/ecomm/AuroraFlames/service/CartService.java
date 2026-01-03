@@ -27,12 +27,17 @@ public class CartService {
     private UserRepository userRepository;
 
     public Cart getCartByUser(User user) {
-        return cartRepository.findByUser(user).orElseGet(() -> {
+        Cart cart = cartRepository.findByUser(user).orElseGet(() -> {
             Cart newCart = new Cart();
             newCart.setUser(user);
             newCart.setCartItems(new ArrayList<>());
             return cartRepository.save(newCart);
         });
+        // Force load cart items and their candles with images
+        cart.getCartItems().forEach(item -> {
+            item.getCandle().getImages().size();
+        });
+        return cart;
     }
 
     public Cart addToCart(User user, Long candleId, Integer quantity) {

@@ -27,21 +27,33 @@ public class CandleService {
 
     // Get only available candles (for public)
     public List<Candle> getAllAvailableCandles() {
-        return candleRepository.findByAvailableTrue();
+        List<Candle> candles = candleRepository.findByAvailableTrue();
+        // Force load images to avoid lazy loading issues
+        candles.forEach(candle -> candle.getImages().size());
+        return candles;
     }
 
     public Candle getCandleById(Long id) {
-        return candleRepository.findById(id)
+        Candle candle = candleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Candle not found"));
+        // Force load images to avoid lazy loading issues
+        candle.getImages().size();
+        return candle;
     }
 
     public List<Candle> searchCandlesByName(String name) {
-        return candleRepository.findByNameContainingIgnoreCase(name);
+        List<Candle> candles = candleRepository.findByNameContainingIgnoreCase(name);
+        // Force load images to avoid lazy loading issues
+        candles.forEach(candle -> candle.getImages().size());
+        return candles;
     }
 
     // Get featured candles for homepage
     public List<Candle> getFeaturedCandles() {
-        return candleRepository.findByFeaturedTrueAndAvailableTrue();
+        List<Candle> candles = candleRepository.findByFeaturedTrueAndAvailableTrue();
+        // Force load images to avoid lazy loading issues
+        candles.forEach(candle -> candle.getImages().size());
+        return candles;
     }
 
     public Candle saveCandle(Candle candle) {

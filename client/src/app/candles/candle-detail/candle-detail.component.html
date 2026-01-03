@@ -17,11 +17,23 @@
         <div class="product-layout">
             <!-- Image Section -->
             <div class="product-gallery">
-                <div class="main-image-container">
+                <div class="main-image-container" [class.zooming]="isZooming">
                     <button class="nav-btn prev" *ngIf="candle.images && candle.images.length > 1"
                         (click)="prevImage()">❮</button>
 
-                    <img [src]="getCurrentImageUrl()" [alt]="candle.name" class="main-image">
+                    <div class="image-zoom-wrapper">
+                        <img [src]="getCurrentImageUrl()" [alt]="candle.name" class="main-image"
+                            (mouseenter)="onImageMouseEnter()" (mousemove)="onImageMouseMove($event)"
+                            (mouseleave)="onImageMouseLeave()" (touchstart)="onImageTouchStart($event)"
+                            (touchmove)="onImageTouchMove($event)" (touchend)="onImageTouchEnd()"
+                            (error)="handleImageError($event)">
+                    </div>
+
+                    <!-- Zoomed image overlay for desktop -->
+                    <div class="zoom-overlay" *ngIf="isZooming"
+                        [style.background-image]="'url(' + getCurrentImageUrl() + ')'"
+                        [style.background-position]="zoomX + '% ' + zoomY + '%'">
+                    </div>
 
                     <button class="nav-btn next" *ngIf="candle.images && candle.images.length > 1"
                         (click)="nextImage()">❯</button>
@@ -31,13 +43,18 @@
                             Stock</span>
                         <span class="badge creators-choice" *ngIf="candle.creatorsChoice">Creator's Choice</span>
                     </div>
+
+                    <!-- Zoom hint -->
+                    <div class="zoom-hint" *ngIf="!isZooming">
+                        <span class="zoom-icon">🔍</span> Hover to zoom
+                    </div>
                 </div>
 
                 <!-- Thumbnails -->
                 <div class="thumbnails" *ngIf="candle.images && candle.images.length > 1">
                     <div class="thumbnail" *ngFor="let img of candle.images; let i = index"
                         [class.active]="i === currentImageIndex" (click)="currentImageIndex = i">
-                        <img [src]="getImageUrl(img)" [alt]="candle.name">
+                        <img [src]="getImageUrl(img)" [alt]="candle.name" (error)="handleImageError($event)">
                     </div>
                 </div>
             </div>

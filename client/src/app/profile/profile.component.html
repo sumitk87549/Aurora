@@ -80,7 +80,7 @@
                         </div>
                         <div class="form-group">
                             <label>City</label>
-                            <select formControlName="city" [disabled]="!cities.length">
+                            <select formControlName="city">
                                 <option value="">Select City</option>
                                 <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
                             </select>
