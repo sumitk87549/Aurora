@@ -93,8 +93,7 @@
                 </div>
 
                 <div class="form-actions text-center">
-                    <button type="submit" class="btn btn-primary btn-lg"
-                        [disabled]="isSaving || profileForm.pristine || profileForm.invalid">
+                    <button type="submit" class="btn btn-primary btn-lg" [disabled]="isSaving || profileForm.pristine">
                         {{ isSaving ? 'Saving...' : 'Save Changes' }}
                     </button>
                 </div>

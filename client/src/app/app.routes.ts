@@ -10,6 +10,8 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
 import { OrderDetailsComponent } from './orders/order-details/order-details.component';
 import { ProfileComponent } from './profile/profile.component';
+import { AboutComponent } from './about/about.component';
+import { ContactComponent } from './contact/contact.component';
 import { AuthGuard, AdminGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -24,6 +26,7 @@ export const routes: Routes = [
   { path: 'orders/:id', component: OrderDetailsComponent, canActivate: [AuthGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'admin', component: AdminDashboardComponent, canActivate: [AdminGuard] },
+  { path: 'about', component: AboutComponent },
+  { path: 'contact', component: ContactComponent },
   { path: '**', redirectTo: '' }
 ];
-

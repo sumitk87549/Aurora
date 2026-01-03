@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CandleService, Candle, CandleImage } from '../../services/candle.service';
+import { API_URL } from '../../config/api.config';
 import { AuthService } from '../../services/auth.service';
 import { OrderService, Order } from '../../services/order.service';
 import { ToastService } from '../../services/toast.service';
@@ -75,24 +76,59 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   loadDashboardStats(): void {
-    this.isLoading = true;
-    this.orderService.getDashboardStats().subscribe({
-      next: (stats) => {
-        this.stats = stats;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading dashboard stats:', error);
-        this.isLoading = false;
-        // Fallback to default values if API fails
-        this.stats = {
-          totalRevenue: 0,
-          todayRevenue: 0,
-          totalOrders: 0,
-          pendingOrders: 0
-        };
+    // Calculate stats from orders data for accurate and fast loading
+    this.calculateStatsFromOrders();
+  }
+
+  calculateStatsFromOrders(): void {
+    if (!this.orders || this.orders.length === 0) {
+      this.stats = {
+        totalRevenue: 0,
+        todayRevenue: 0,
+        totalOrders: 0,
+        pendingOrders: 0
+      };
+      return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let totalRevenue = 0;
+    let todayRevenue = 0;
+    let totalOrders = this.orders.length;
+    let pendingOrders = 0;
+
+    // Calculate revenue from completed orders only
+    this.orders.forEach(order => {
+      // Count total orders
+      totalOrders = this.orders.length;
+
+      // Count pending orders (orders that are not delivered, cancelled, or failed)
+      if (order.status !== 'DELIVERED' && order.status !== 'CANCELLED' && order.status !== 'FAILED') {
+        pendingOrders++;
+      }
+
+      // Calculate revenue from completed orders (delivered orders)
+      if (order.status === 'DELIVERED') {
+        totalRevenue += order.totalAmount;
+
+        // Check if order was placed today
+        const orderDate = new Date(order.orderDate);
+        orderDate.setHours(0, 0, 0, 0);
+
+        if (orderDate.getTime() === today.getTime()) {
+          todayRevenue += order.totalAmount;
+        }
       }
     });
+
+    this.stats = {
+      totalRevenue,
+      todayRevenue,
+      totalOrders,
+      pendingOrders
+    };
   }
 
   loadOrders(): void {
@@ -101,6 +137,8 @@ export class AdminDashboardComponent implements OnInit {
       next: (orders: Order[]) => {
         this.orders = orders;
         this.isLoading = false;
+        // Calculate stats after loading orders for accurate data
+        this.calculateStatsFromOrders();
       },
       error: (error: any) => {
         this.errorMessage = 'Failed to load orders';
@@ -108,6 +146,8 @@ export class AdminDashboardComponent implements OnInit {
         console.error('Error loading orders:', error);
         // Provide some mock data for development
         this.orders = [];
+        // Calculate stats even with empty orders
+        this.calculateStatsFromOrders();
       }
     });
   }
@@ -127,6 +167,8 @@ export class AdminDashboardComponent implements OnInit {
         if (index !== -1) {
           this.orders[index] = { ...this.orders[index], status: newStatus };
         }
+        // Recalculate stats after status update for accurate revenue
+        this.calculateStatsFromOrders();
       },
       error: (error) => {
         console.error('Error updating order status:', error);
@@ -200,7 +242,7 @@ export class AdminDashboardComponent implements OnInit {
     console.log('Number of images:', images.length);
     console.log('Token:', token ? 'Present' : 'Missing');
 
-    this.http.post(`http://localhost:8081/api/admin/candles/${candleId}/images`, formData, { headers })
+    this.http.post(`${API_URL}/admin/candles/${candleId}/images`, formData, { headers })
       .subscribe({
         next: (response: any) => {
           console.log('Upload response:', response);
@@ -301,7 +343,7 @@ export class AdminDashboardComponent implements OnInit {
     if (!image || !image.id) {
       return '/assets/default-candle.jpg';
     }
-    return `http://localhost:8081/api/candles/images/${image.id}`;
+    return `${API_URL}/candles/images/${image.id}`;
   }
 
   // Image navigation for product cards
@@ -336,7 +378,7 @@ export class AdminDashboardComponent implements OnInit {
       const token = this.authService.getToken();
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-      this.http.delete(`http://localhost:8081/api/admin/candles/${candleId}/images/${imageId}`, { headers })
+      this.http.delete(`${API_URL}/admin/candles/${candleId}/images/${imageId}`, { headers })
         .subscribe({
           next: () => {
             // Refresh the candle data

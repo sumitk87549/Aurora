@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { API_URL } from '../config/api.config';
 
 export interface AuthRequest {
   email: string;
@@ -28,7 +29,7 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8081/api/auth';
+  private apiUrl = `${API_URL}/auth`;
   private currentUserSubject: BehaviorSubject<AuthResponse | null>;
   public currentUser: Observable<AuthResponse | null>;
 

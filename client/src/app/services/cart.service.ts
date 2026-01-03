@@ -16,11 +16,13 @@ export interface Cart {
   cartItems: CartItem[];
 }
 
+import { API_URL } from '../config/api.config';
+
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  private apiUrl = 'http://localhost:8081/api/cart';
+  private apiUrl = `${API_URL}/cart`;
 
   constructor(private http: HttpClient) { }
 

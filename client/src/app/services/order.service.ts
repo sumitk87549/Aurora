@@ -68,11 +68,13 @@ export interface PaymentConfig {
     razorpayKeyId: string;
 }
 
+import { API_URL } from '../config/api.config';
+
 @Injectable({
     providedIn: 'root'
 })
 export class OrderService {
-    private apiUrl = 'http://localhost:8081/api/orders';
+    private apiUrl = `${API_URL}/orders`;
 
     constructor(private http: HttpClient) { }
 
@@ -137,7 +139,7 @@ export class OrderService {
             });
             observer.complete();
         });
-        
+
         // Uncomment this when backend is ready
         // return this.http.get<DashboardStats>(`${this.apiUrl}/admin/stats`);
     }

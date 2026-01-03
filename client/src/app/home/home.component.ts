@@ -7,6 +7,7 @@ import { WishlistService } from '../services/wishlist.service';
 import { ToastService } from '../services/toast.service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { API_URL } from '../config/api.config';
 
 @Component({
   selector: 'app-home',
@@ -246,7 +247,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   getImageUrl(image?: CandleImage): string {
     if (!image || !image.id) return '/assets/default-candle.jpg';
     if (image.imageData) return image.imageData;
-    return `http://localhost:8081/api/candles/images/${image.id}`;
+    return `${API_URL}/candles/images/${image.id}`;
   }
 
   nextImage(candle: Candle, event: Event): void {

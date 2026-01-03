@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { CartService } from '../services/cart.service';
 import { UserService, UserProfile } from '../services/user.service';
+import { ThemeService } from '../services/theme.service';
 import { CommonModule, NgIf, NgClass, AsyncPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 
@@ -17,6 +18,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isMobileMenuOpen = false;
   isScrolled = false;
   cartItemCount = 0;
+  isDarkMode = false;
 
   // User profile info
   userName: string = '';
@@ -27,17 +29,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private router: Router,
     public authService: AuthService,
     private cartService: CartService,
-    private userService: UserService
+    private userService: UserService,
+    public themeService: ThemeService
   ) { }
 
   ngOnInit(): void {
+    // Subscribe to theme changes
+    const themeSub = this.themeService.theme$.subscribe(theme => {
+      this.isDarkMode = theme === 'dark';
+    });
+    this.subscriptions.push(themeSub);
+
     if (this.isLoggedIn()) {
       this.loadUserProfile();
       this.loadCartCount();
     }
-
-    // Subscribe to auth changes
-    // (In production, you'd have an auth state observable)
   }
 
   ngOnDestroy(): void {

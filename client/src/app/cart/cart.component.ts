@@ -4,6 +4,7 @@ import { PricingService, OrderSummary } from '../services/pricing.service';
 import { ToastService } from '../services/toast.service';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule, SlicePipe } from '@angular/common';
+import { API_URL } from '../config/api.config';
 
 @Component({
   selector: 'app-cart',
@@ -44,6 +45,10 @@ export class CartComponent implements OnInit {
     });
   }
 
+  navigateToCandleDetail(candleId: number): void {
+    this.router.navigate(['/candles', candleId]);
+  }
+
   calculateOrderSummary(): void {
     if (!this.cart || this.cart.cartItems.length === 0) {
       this.orderSummary = null;
@@ -61,8 +66,19 @@ export class CartComponent implements OnInit {
       return;
     }
 
+    // Store current order of cart items
+    const currentOrder = this.cart ? this.cart.cartItems.map(item => item.id) : [];
+
     this.cartService.updateCartItem(itemId, quantity).subscribe({
       next: (updatedCart) => {
+        // Preserve the original order of cart items
+        if (updatedCart.cartItems.length > 0) {
+          updatedCart.cartItems.sort((a, b) => {
+            const indexA = currentOrder.indexOf(a.id);
+            const indexB = currentOrder.indexOf(b.id);
+            return indexA - indexB;
+          });
+        }
         this.cart = updatedCart;
         this.calculateOrderSummary();
       },
@@ -73,8 +89,20 @@ export class CartComponent implements OnInit {
   }
 
   removeItem(itemId: number): void {
+    // Store current order of cart items (excluding the one being removed)
+    const currentOrder = this.cart ?
+      this.cart.cartItems.filter(item => item.id !== itemId).map(item => item.id) : [];
+
     this.cartService.removeFromCart(itemId).subscribe({
       next: (updatedCart) => {
+        // Preserve the original order for remaining items
+        if (updatedCart.cartItems.length > 0) {
+          updatedCart.cartItems.sort((a, b) => {
+            const indexA = currentOrder.indexOf(a.id);
+            const indexB = currentOrder.indexOf(b.id);
+            return indexA - indexB;
+          });
+        }
         this.cart = updatedCart;
         this.calculateOrderSummary();
         this.toastService.info('Item removed from cart');
@@ -128,5 +156,11 @@ export class CartComponent implements OnInit {
 
   getAmountToFreeDelivery(): number {
     return Math.max(0, this.getFreeDeliveryThreshold() - this.getTotalPrice());
+  }
+
+  getImageUrl(image?: any): string {
+    if (!image || !image.id) return '/assets/default-candle.jpg';
+    if (image.imageData) return image.imageData;
+    return `${API_URL}/candles/images/${image.id}`;
   }
 }

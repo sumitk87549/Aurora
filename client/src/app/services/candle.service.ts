@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_URL } from '../config/api.config';
 
 export interface Candle {
   id: number;
@@ -27,8 +28,8 @@ export interface CandleImage {
   providedIn: 'root'
 })
 export class CandleService {
-  private apiUrl = 'http://localhost:8081/api/candles';
-  private adminApiUrl = 'http://localhost:8081/api/admin';
+  private apiUrl = `${API_URL}/candles`;
+  private adminApiUrl = `${API_URL}/admin`;
 
   constructor(private http: HttpClient) { }
 

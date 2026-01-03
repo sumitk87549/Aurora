@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WishlistService, Wishlist } from '../services/wishlist.service';
+import { API_URL } from '../config/api.config';
 import { CartService } from '../services/cart.service';
 import { CommonModule } from '@angular/common';
 import { CandleImage } from '../services/candle.service';
@@ -19,7 +20,7 @@ export class WishlistComponent implements OnInit {
   constructor(
     private wishlistService: WishlistService,
     private cartService: CartService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadWishlist();
@@ -64,18 +65,18 @@ export class WishlistComponent implements OnInit {
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString();
   }
-  
+
   getImageUrl(image?: CandleImage): string {
     if (!image || !image.id) {
       return '/assets/default-candle.jpg';
     }
-    
+
     // If image has base64 data, use it directly
     if (image.imageData) {
       return image.imageData;
     }
-    
+
     // Fallback to API endpoint if no base64 data
-    return `http://localhost:8081/api/candles/images/${image.id}`;
+    return `${API_URL}/candles/images/${image.id}`;
   }
 }

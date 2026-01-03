@@ -6,6 +6,7 @@
   padding-top: 4rem;
   margin-bottom: var(--space-lg);
   position: relative;
+  transition: background-color var(--transition-theme);
 
   &::after {
     content: '';
@@ -24,6 +25,7 @@
   max-width: 600px;
   margin: var(--space-md) auto 0;
   font-size: 1.1rem;
+  color: var(--text-secondary);
 }
 
 /* ==================== TOOLBAR & FILTERS ==================== */
@@ -38,11 +40,17 @@
   box-shadow: var(--shadow-sm);
   flex-wrap: wrap;
   gap: var(--space-md);
+  transition: background-color var(--transition-theme), box-shadow var(--transition-theme);
+  border: 1px solid var(--border-light);
 
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: stretch;
   }
+}
+
+[data-theme="dark"] .toolbar {
+  border-color: var(--border-color);
 }
 
 .search-bar {
@@ -74,11 +82,16 @@
 
   @media (max-width: 576px) {
     flex-direction: column;
+    width: 100%;
   }
 }
 
 .filter-select {
   min-width: 150px;
+
+  @media (max-width: 576px) {
+    min-width: 100%;
+  }
 }
 
 /* ==================== PRODUCT GRID ==================== */
@@ -89,13 +102,20 @@
   margin-bottom: var(--space-3xl);
 }
 
+@media (max-width: 575.98px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+}
+
 .product-card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  transition: all var(--transition-normal);
-  border: 1px solid var(--bg-secondary);
+  transition: all var(--transition-normal), background-color var(--transition-theme);
+  border: 1px solid var(--border-light);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -112,6 +132,16 @@
     .card-overlay {
       opacity: 1;
     }
+  }
+}
+
+/* Dark mode product card with candle glow */
+[data-theme="dark"] .product-card {
+  border-color: var(--border-color);
+
+  &:hover {
+    box-shadow: var(--shadow-lg), 0 0 30px rgba(255, 180, 50, 0.15);
+    border-color: rgba(212, 175, 55, 0.4);
   }
 }
 

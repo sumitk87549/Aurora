@@ -46,7 +46,7 @@
         <div class="stat-card today">
           <div class="stat-icon">📅</div>
           <div class="stat-info">
-            <h3>Today's sales</h3>
+            <h3>Total sales</h3>
             <p class="stat-value">{{ stats.todayRevenue | currency:'INR' }}</p>
           </div>
         </div>
@@ -185,6 +185,7 @@
             <div class="image-management" *ngIf="candle.images && candle.images.length > 0">
               <span class="image-counter">{{ (currentImageIndex[candle.id] || 0) + 1 }} / {{ candle.images.length
                 }}</span>
+
               <button class="btn-icon delete-image" *ngIf="candle.images && candle.images.length > 1"
                 (click)="deleteImage(candle.id, candle.images[currentImageIndex[candle.id] || 0].id)"
                 title="Delete current image">🗑️</button>

@@ -36,14 +36,16 @@
 
         <div class="cart-items" *ngIf="cart && cart.cartItems.length > 0">
           <div class="cart-item" *ngFor="let item of cart.cartItems">
-            <div class="item-image" style="width: 120px; height: 120px;">
-              <img
-                [src]="item.candle.images && item.candle.images.length > 0 ? (item.candle.images[0].imageData || 'http://localhost:8081/api/candles/images/' + item.candle.images[0].id) : '/assets/default-candle.jpg'"
-                [alt]="item.candle.name" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+            <div class="item-image-container" (click)="navigateToCandleDetail(item.candle.id)">
+              <div class="item-image">
+                <img
+                  [src]="item.candle.images && item.candle.images.length > 0 ? getImageUrl(item.candle.images[0]) : '/assets/default-candle.jpg'"
+                  [alt]="item.candle.name">
+              </div>
             </div>
 
-            <div class="item-details">
-              <h3>{{ item.candle.name }}</h3>
+            <div class="item-details" (click)="navigateToCandleDetail(item.candle.id)">
+              <h3 class="item-title">{{ item.candle.name }}</h3>
               <p class="subtitle">{{ item.candle.description | slice:0:50 }}...</p>
             </div>
 

@@ -15,11 +15,13 @@ export interface Wishlist {
   wishlistItems: WishlistItem[];
 }
 
+import { API_URL } from '../config/api.config';
+
 @Injectable({
   providedIn: 'root'
 })
 export class WishlistService {
-  private apiUrl = 'http://localhost:8081/api/wishlist';
+  private apiUrl = `${API_URL}/wishlist`;
 
   constructor(private http: HttpClient) { }
 

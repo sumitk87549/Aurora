@@ -123,7 +123,7 @@
     pointer-events: none;
     z-index: 100;
     background-color: white;
-    
+
     @media (max-width: 768px) {
         display: none;
     }
@@ -419,7 +419,7 @@
         width: 40px;
         height: 100%;
         border: none;
-        background: var(--primary-light);
+        background: linear-gradient(135deg, #D4A574 0%, #C4956A 50%, #A67C52 100%);
         color: white;
         border-radius: var(--radius-sm);
         font-size: 1.5rem;
@@ -427,15 +427,33 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: all 0.2s ease;
+        box-shadow: var(--shadow-sm);
 
         &:hover:not(:disabled) {
-            background: var(--primary-dark);
+            background: linear-gradient(135deg, #C4956A 0%, #A67C52 50%, #8B6A44 100%);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
         }
 
         &:disabled {
-            background: var(--bg-secondary);
-            cursor: not-allowed;
+            background: var(--bg-secondary) !important;
+            color: var(--text-muted) !important;
+            cursor: not-allowed !important;
+            opacity: 0.7 !important;
+            transform: none !important;
+            box-shadow: none !important;
+            pointer-events: none !important;
+            border: 1px solid var(--bg-secondary) !important;
+        }
+    }
+
+    // Specific styling for the '+' button to ensure it has correct background
+    .qty-btn:last-child {
+        background: linear-gradient(135deg, #D4A574 0%, #C4956A 50%, #A67C52 100%);
+
+        &:hover:not(:disabled) {
+            background: linear-gradient(135deg, #C4956A 0%, #A67C52 50%, #8B6A44 100%);
         }
     }
 

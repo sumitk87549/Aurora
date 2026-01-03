@@ -7,7 +7,7 @@
   background: var(--bg-primary);
   box-shadow: none;
   z-index: 1000;
-  transition: all var(--transition-normal);
+  transition: all var(--transition-normal), background-color var(--transition-theme);
 
   &.scrolled {
     height: 70px;
@@ -15,6 +15,68 @@
     backdrop-filter: blur(10px);
     box-shadow: var(--shadow-sm);
   }
+}
+
+/* Dark mode scrolled state */
+[data-theme="dark"] .navbar.scrolled {
+  background: rgba(26, 21, 18, 0.95);
+}
+
+/* Nav Actions Container */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+
+  svg {
+    transition: transform 0.3s ease, opacity 0.2s ease;
+  }
+
+  &:hover {
+    background: var(--primary-light);
+    transform: scale(1.05);
+
+    svg {
+      transform: rotate(15deg);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+[data-theme="dark"] .theme-toggle {
+  background: var(--bg-tertiary);
+  color: var(--accent-gold);
+
+  &:hover {
+    background: var(--primary-light);
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+.icon-sun {
+  color: var(--accent-gold);
+}
+
+.icon-moon {
+  color: var(--text-secondary);
 }
 
 .nav-container-full {
@@ -26,6 +88,38 @@
   width: 100%;
 }
 
+/* Logo CSS Variables - Light Mode */
+:root {
+  --logo-flame-base: #D4A574;
+  --logo-flame-mid: #E8B86D;
+  --logo-flame-tip: #FFD700;
+  --logo-inner-base: #FFA500;
+  --logo-inner-tip: #FFFACD;
+  --logo-candle-left: #F5EDE3;
+  --logo-candle-center: #FFFAF5;
+  --logo-candle-right: #E8DDD4;
+  --logo-holder-top: #B8860B;
+  --logo-holder-bottom: #8B6914;
+  --logo-wick: #4A3F32;
+  --logo-sparkle: #FFD700;
+}
+
+/* Logo CSS Variables - Dark Mode */
+[data-theme="dark"] {
+  --logo-flame-base: #FF8C00;
+  --logo-flame-mid: #FFA500;
+  --logo-flame-tip: #FFD700;
+  --logo-inner-base: #FFCC00;
+  --logo-inner-tip: #FFFEF0;
+  --logo-candle-left: #E8DDD4;
+  --logo-candle-center: #FFF8F0;
+  --logo-candle-right: #D4C8BC;
+  --logo-holder-top: #D4AF37;
+  --logo-holder-bottom: #B8860B;
+  --logo-wick: #8B7355;
+  --logo-sparkle: #FFE55C;
+}
+
 /* Brand */
 .nav-brand {
   display: flex;
@@ -35,7 +129,7 @@
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
-  transition: transform var(--transition-fast);
+  transition: transform var(--transition-fast), color var(--transition-fast);
 
   &:hover {
     transform: scale(1.02);
@@ -43,9 +137,117 @@
   }
 
   .brand-icon {
-    font-size: 1.8rem;
-    filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+
+    .brand-logo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.3));
+      transition: filter var(--transition-normal);
+    }
   }
+
+  .brand-text {
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: all var(--transition-fast);
+  }
+}
+
+/* Dark mode brand enhancements */
+[data-theme="dark"] .nav-brand {
+  .brand-icon .brand-logo {
+    filter: drop-shadow(0 0 8px rgba(255, 180, 50, 0.4));
+  }
+
+  .brand-text {
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-gold) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  &:hover .brand-icon .brand-logo {
+    filter: drop-shadow(0 0 12px rgba(255, 200, 80, 0.6));
+  }
+}
+
+/* Flame animation */
+@keyframes flameFlicker {
+  0% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scaleY(1.05) scaleX(0.97);
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: scaleY(0.98) scaleX(1.02);
+    opacity: 1;
+  }
+}
+
+/* Sparkle animation */
+@keyframes sparkleGlow {
+  0% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0.9;
+    transform: scale(1.3);
+  }
+}
+
+/* Nav Icon Styles */
+.nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+
+  svg {
+    stroke: currentColor;
+    transition: all var(--transition-fast);
+  }
+}
+
+.dropdown-item .icon,
+.dropdown-menu .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+
+  svg {
+    stroke: currentColor;
+  }
+}
+
+.dropdown-arrow {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+  opacity: 0.7;
+
+  svg {
+    transition: transform var(--transition-fast);
+  }
+}
+
+.dropdown-container:hover .dropdown-arrow svg {
+  transform: rotate(180deg);
 }
 
 /* Navigation Menu */
@@ -357,6 +559,26 @@
     width: 100%;
     margin-top: var(--space-md);
     gap: var(--space-md);
+
+    .logout-item {
+      background-color: #e57373;
+      color: white !important;
+      border: none !important;
+      border-radius: 50px;
+      padding: 10px 20px !important;
+      text-align: center;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #d32f2f;
+        transform: translateY(-1px);
+      }
+
+      .icon {
+        margin-right: 8px;
+      }
+    }
   }
 
   /* Mobile Profile Header */

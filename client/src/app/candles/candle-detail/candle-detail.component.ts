@@ -8,6 +8,7 @@ import { WishlistService } from '../../services/wishlist.service';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
+import { API_URL } from '../../config/api.config';
 
 @Component({
   selector: 'app-candle-detail',
@@ -131,7 +132,7 @@ export class CandleDetailComponent implements OnInit, OnDestroy {
       return image.imageData;
     }
 
-    return `http://localhost:8081/api/candles/images/${image.id}`;
+    return `${API_URL}/candles/images/${image.id}`;
   }
 
   handleImageError(event: any): void {
@@ -160,9 +161,15 @@ export class CandleDetailComponent implements OnInit, OnDestroy {
   }
 
   updateQuantity(delta: number): void {
+    console.log('updateQuantity called with delta:', delta);
+    console.log('Current cartItem:', this.cartItem);
+    console.log('Current candle stock:', this.candle?.stockQuantity);
+
     if (!this.checkLogin() || !this.cartItem) return;
 
     const newQuantity = this.cartItem.quantity + delta;
+    console.log('New quantity would be:', newQuantity);
+
     this.isUpdatingCart = true;
 
     if (newQuantity <= 0) {

@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { CommonModule, NgIf, NgFor, JsonPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { API_URL } from '../config/api.config';
 
 @Component({
   selector: 'app-candles',
@@ -404,7 +405,7 @@ export class CandlesComponent implements OnInit, OnDestroy {
       return image.imageData;
     }
 
-    return `http://localhost:8081/api/candles/images/${image.id}`;
+    return `${API_URL}/candles/images/${image.id}`;
   }
 
   navigateToCandleDetail(candle: Candle): void {

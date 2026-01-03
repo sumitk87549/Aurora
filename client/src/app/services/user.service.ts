@@ -15,11 +15,13 @@ export interface UserProfile {
     pincode: string;
 }
 
+import { API_URL } from '../config/api.config';
+
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
-    private apiUrl = 'http://localhost:8081/api/users';
+    private apiUrl = `${API_URL}/users`;
     private userProfileSubject = new BehaviorSubject<UserProfile | null>(null);
     userProfile$ = this.userProfileSubject.asObservable();
 
