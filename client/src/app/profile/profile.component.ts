@@ -94,6 +94,8 @@ export class ProfileComponent implements OnInit {
   selectEmoji(emoji: string): void {
     this.profileForm.patchValue({ profileEmoji: emoji });
     this.profileForm.markAsDirty();
+    // Update locally immediately as per request
+    this.userService.updateLocalEmoji(emoji);
   }
 
   onSubmit(): void {

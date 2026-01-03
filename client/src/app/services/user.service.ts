@@ -35,17 +35,42 @@ export class UserService {
         return this.http.get<UserProfile>(`${this.apiUrl}/profile`, {
             headers: { Authorization: `Bearer ${token}` }
         }).pipe(
-            tap(profile => this.userProfileSubject.next(profile))
+            tap(profile => {
+                // Check for local emoji override
+                const localEmoji = localStorage.getItem('user_emoji');
+                if (localEmoji) {
+                    profile.profileEmoji = localEmoji;
+                }
+                this.userProfileSubject.next(profile);
+            })
         );
     }
 
     updateProfile(profile: UserProfile): Observable<UserProfile> {
         const token = this.authService.getToken();
+        // Don't send local emoji to backend if we want to keep it strictly local
+        // But for object consistency we might send it, just won't rely on response for it
         return this.http.put<UserProfile>(`${this.apiUrl}/profile`, profile, {
             headers: { Authorization: `Bearer ${token}` }
         }).pipe(
-            tap(updatedProfile => this.userProfileSubject.next(updatedProfile))
+            tap(updatedProfile => {
+                const localEmoji = localStorage.getItem('user_emoji');
+                if (localEmoji) {
+                    updatedProfile.profileEmoji = localEmoji;
+                }
+                this.userProfileSubject.next(updatedProfile);
+            })
         );
+    }
+
+    // Method to update emoji locally and immediately
+    updateLocalEmoji(emoji: string): void {
+        localStorage.setItem('user_emoji', emoji);
+        const currentProfile = this.userProfileSubject.value;
+        if (currentProfile) {
+            const updatedProfile = { ...currentProfile, profileEmoji: emoji };
+            this.userProfileSubject.next(updatedProfile);
+        }
     }
 
     refreshProfile(): void {
