@@ -64,6 +64,28 @@ export class AuthService {
     );
   }
 
+  handleSocialLogin(token: string): Observable<AuthResponse> {
+    // Temporarily save token to use it in the request
+    const tempUser: AuthResponse = {
+      token: token,
+      email: '',
+      firstName: '',
+      lastName: '',
+      role: ''
+    };
+    localStorage.setItem('currentUser', JSON.stringify(tempUser));
+    this.currentUserSubject.next(tempUser);
+
+    return this.http.get<AuthResponse>(`${this.apiUrl}/me`).pipe(
+      map(user => {
+        // Update with full user details
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+        return user;
+      })
+    );
+  }
+
   logout() {
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);

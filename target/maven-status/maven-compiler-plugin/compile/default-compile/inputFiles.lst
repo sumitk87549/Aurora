@@ -1,4 +1,5 @@
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/AuroraFlamesApplication.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/config/AppConfig.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/config/DataInitializer.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/config/GlobalExceptionHandler.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/config/JwtAuthenticationEntryPoint.java
@@ -48,6 +49,7 @@
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/repository/UserRepository.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/repository/WishlistItemRepository.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/repository/WishlistRepository.java
+/home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/security/OAuth2LoginSuccessHandler.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/AuthService.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/CandleService.java
 /home/prachi/Documents/GitHub/Aurora/src/main/java/com/ecomm/AuroraFlames/service/CartService.java

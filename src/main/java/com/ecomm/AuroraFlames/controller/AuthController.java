@@ -37,4 +37,10 @@ public class AuthController {
         AuthResponse response = authService.login(authRequest);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<AuthResponse> getCurrentUser(java.security.Principal principal) {
+        AuthResponse response = authService.getCurrentUser(principal.getName());
+        return ResponseEntity.ok(response);
+    }
 }

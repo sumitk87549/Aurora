@@ -5,6 +5,7 @@ import { WishlistService, Wishlist } from '../services/wishlist.service';
 import { AuthService } from '../services/auth.service';
 import { ToastService } from '../services/toast.service';
 import { Router } from '@angular/router';
+import { Meta, Title } from '@angular/platform-browser';
 import { CommonModule, NgIf, NgFor, JsonPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -15,7 +16,7 @@ import { API_URL } from '../config/api.config';
   templateUrl: './candles.component.html',
   styleUrls: ['./candles.component.scss'],
   standalone: true,
-  imports: [CommonModule, NgIf, NgFor, FormsModule, JsonPipe]
+  imports: [CommonModule, NgIf, NgFor, FormsModule]
 })
 export class CandlesComponent implements OnInit, OnDestroy {
   candles: Candle[] = [];
@@ -51,10 +52,21 @@ export class CandlesComponent implements OnInit, OnDestroy {
     private wishlistService: WishlistService,
     private authService: AuthService,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    private meta: Meta,
+    private title: Title
   ) { }
 
   ngOnInit(): void {
+    // Set SEO meta tags
+    this.title.setTitle('Handmade Candles Collection - Aurora Flames');
+    this.meta.updateTag({ name: 'description', content: 'Browse our exquisite collection of handmade scented candles. Premium artisanal wax creations with unique fragrances for your home decor.' });
+    this.meta.updateTag({ name: 'keywords', content: 'handmade candles, scented candles, artisanal candles, fragrance candles, premium candles, Aurora Flames' });
+    this.meta.updateTag({ property: 'og:title', content: 'Handmade Candles Collection - Aurora Flames' });
+    this.meta.updateTag({ property: 'og:description', content: 'Browse our exquisite collection of handmade scented candles and unique fragrance blends.' });
+    this.meta.updateTag({ property: 'og:type', content: 'website' });
+    this.meta.updateTag({ property: 'og:url', content: 'https://auroraflames.com/candles' });
+
     this.loadCandles();
     // Always try to load cart if user is logged in
     if (this.isLoggedIn()) {

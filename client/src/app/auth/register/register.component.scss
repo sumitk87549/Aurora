@@ -6,7 +6,7 @@
   background: var(--bg-primary);
   padding: 2rem;
   position: relative;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -107,7 +107,7 @@
   box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -123,7 +123,7 @@
 .register-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg), var(--shadow-glow);
-  
+
   &::before {
     left: 100%;
   }
@@ -131,6 +131,67 @@
 
 .register-btn:active:not(:disabled) {
   transform: translateY(0);
+}
+
+
+.social-login-container {
+  margin-bottom: var(--space-lg);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: var(--space-lg) 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  span {
+    padding: 0 var(--space-md);
+  }
+}
+
+.social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  font-family: var(--font-body);
+
+  &:hover {
+    background: var(--bg-secondary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+.google-btn {
+  // border-color: #4285f4;
+}
+
+.facebook-btn {
+  // border-color: #1877f2;
 }
 
 .register-btn:disabled {
@@ -163,7 +224,7 @@
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .register-card {
     padding: var(--space-2xl);
   }

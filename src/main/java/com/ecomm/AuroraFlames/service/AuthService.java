@@ -50,12 +50,23 @@ public class AuthService {
 
     public AuthResponse login(AuthRequest authRequest) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 
         User user = userRepository.findByEmail(authRequest.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        String token = jwtUtil.generateToken(user.getEmail());
+        return new AuthResponse(token, user.getEmail(), user.getFirstName(), user.getLastName(), user.getRole().name());
+    }
+
+    public AuthResponse getCurrentUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        // We reuse the existing token logic or just return the user info.
+        // Since the frontend already has the token, we can just return a new one or the
+        // same one.
+        // For simplicity, let's generate a new one or expect the caller to have one.
+        // Actually, the AuthResponse expects a token.
         String token = jwtUtil.generateToken(user.getEmail());
         return new AuthResponse(token, user.getEmail(), user.getFirstName(), user.getLastName(), user.getRole().name());
     }

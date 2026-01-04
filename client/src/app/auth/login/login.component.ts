@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService, AuthRequest } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [FormsModule, CommonModule]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginData: AuthRequest = {
     email: '',
     password: ''
@@ -20,7 +20,30 @@ export class LoginComponent {
   errorMessage: string = '';
   isLoading: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const token = params['token'];
+      if (token) {
+        this.isLoading = true;
+        this.authService.handleSocialLogin(token).subscribe({
+          next: (response: any) => {
+            this.isLoading = false;
+            this.router.navigate(['/']); // Always redirect to home after social login
+          },
+          error: (error: any) => {
+            this.isLoading = false;
+            this.errorMessage = 'Social login failed';
+          }
+        });
+      }
+    });
+  }
 
   onSubmit(): void {
     this.isLoading = true;

@@ -48,7 +48,7 @@ sudo snap install ngrok
 Run this once (replace `YOUR_AUTH_TOKEN` with your actual token):
 
 ```bash
-ngrok config add-authtoken YOUR_AUTH_TOKEN
+ngrok config add-authtoken 37lhnet5Qwqc5fTxwtfidGVWw5L_Rg1doDrPEM4UWJ67X34x
 ```
 
 ### Step 4: Expose Your Backend (Spring Boot)

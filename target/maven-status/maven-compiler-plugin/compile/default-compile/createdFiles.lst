@@ -2,6 +2,7 @@ com/ecomm/AuroraFlames/service/CandleService.class
 com/ecomm/AuroraFlames/controller/WishlistController.class
 com/ecomm/AuroraFlames/repository/CandleRepository.class
 com/ecomm/AuroraFlames/entity/WishlistItem.class
+com/ecomm/AuroraFlames/security/OAuth2LoginSuccessHandler.class
 com/ecomm/AuroraFlames/dto/AuthResponse.class
 com/ecomm/AuroraFlames/repository/OrderRepository.class
 com/ecomm/AuroraFlames/dto/OrderDTO.class
@@ -25,6 +26,7 @@ com/ecomm/AuroraFlames/repository/CandleImageRepository.class
 com/ecomm/AuroraFlames/config/GlobalExceptionHandler.class
 com/ecomm/AuroraFlames/dto/DashboardStats.class
 com/ecomm/AuroraFlames/repository/CartRepository.class
+com/ecomm/AuroraFlames/config/AppConfig.class
 com/ecomm/AuroraFlames/controller/CandleController.class
 com/ecomm/AuroraFlames/entity/User.class
 com/ecomm/AuroraFlames/controller/UserController.class

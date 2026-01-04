@@ -1,5 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer2, Inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 import { CandleService, Candle, CandleImage } from '../services/candle.service';
 import { CartService, Cart, CartItem } from '../services/cart.service';
@@ -35,6 +37,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
+    private meta: Meta,
+    private title: Title,
+    private renderer: Renderer2,
+    @Inject(DOCUMENT) private document: Document,
     private authService: AuthService,
     private candleService: CandleService,
     private cartService: CartService,
@@ -43,6 +49,40 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    // Set SEO meta tags
+    this.title.setTitle('Aurora Flames - Premium Handmade Candles');
+    this.meta.updateTag({ name: 'description', content: 'Discover exquisite handmade candles at Aurora Flames. Shop premium scented candles, artisanal wax creations, and unique fragrance blends for your home.' });
+    this.meta.updateTag({ name: 'keywords', content: 'handmade candles, scented candles, premium candles, artisanal wax, fragrance candles, Aurora Flames' });
+    this.meta.updateTag({ property: 'og:title', content: 'Aurora Flames - Premium Handmade Candles' });
+    this.meta.updateTag({ property: 'og:description', content: 'Discover exquisite handmade candles at Aurora Flames. Shop premium scented candles and unique fragrance blends.' });
+    this.meta.updateTag({ property: 'og:type', content: 'website' });
+    this.meta.updateTag({ property: 'og:url', content: 'https://auroraflames.com' });
+    this.meta.updateTag({ property: 'og:image', content: 'https://auroraflames.com/assets/logo-light-mode.png' });
+
+    // Add structured data
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Aurora Flames",
+      "url": "https://auroraflames.com",
+      "logo": "https://auroraflames.com/assets/logo-light-mode.png",
+      "description": "Premium handmade scented candles and artisanal wax creations",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-9876543210",
+        "contactType": "customer service",
+        "availableLanguage": "English"
+      },
+      "sameAs": [
+        "https://www.instagram.com/auroraflames"
+      ]
+    };
+
+    const script = this.renderer.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(structuredData);
+    this.renderer.appendChild(this.document.head, script);
+
     this.loadFeaturedCandles();
     if (this.isLoggedIn()) {
       this.loadCart();
