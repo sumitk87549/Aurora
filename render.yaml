@@ -12,7 +12,7 @@ services:
     envVars:
       # Database Configuration (Neon PostgreSQL)
       - key: DATABASE_URL
-        value: jdbc:postgresql://postgres:npg_FcAUEC4QL8hy@ep-morning-queen-a1mzyf4v-pooler.ap-southeast-1.aws.neon.tech/auroraflames?sslmode=require&channel_binding=require
+        value: jdbc:postgresql://ep-morning-queen-a1mzyf4v-pooler.ap-southeast-1.aws.neon.tech:5432/auroraflames?sslmode=require
       - key: DB_USERNAME
         value: postgres
       - key: DB_PASSWORD
