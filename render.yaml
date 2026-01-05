@@ -37,6 +37,18 @@ services:
         value: aurora.flames01@gmail.com
       - key: ADMIN_EMAIL
         value: aurora.flames01@gmail.com
+      - key: BUSINESS_NAME
+        value: Aurora Flames
+      - key: BUSINESS_PHONE
+        value: +91 95872 59166
+      - key: BUSINESS_INSTAGRAM
+        value: aurora_flames
+      - key: BUSINESS_ADDRESS
+        value: Pearl Residencynear kota, Kunadi, Electricity Board Area, Kota, Rajasthan 324008
+      - key: DELIVERY_DAYS
+        value: 5
+      - key: FREE_SHIPPING_THRESHOLD
+        value: 999
         
       # Razorpay (add your keys in Render dashboard)
       - key: RAZORPAY_KEY_ID
