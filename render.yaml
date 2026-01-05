@@ -1,0 +1,64 @@
+services:
+  # Aurora Flames Backend Service
+  - type: web
+    name: aurora-flames-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true
+    
+    # Environment Variables (these will be set in Render dashboard)
+    envVars:
+      # Database Configuration (Neon PostgreSQL)
+      - key: DATABASE_URL
+        value: jdbc:postgresql://postgres:npg_FcAUEC4QL8hy@ep-morning-queen-a1mzyf4v-pooler.ap-southeast-1.aws.neon.tech/auroraflames?sslmode=require&channel_binding=require
+      - key: DB_USERNAME
+        value: postgres
+      - key: DB_PASSWORD
+        value: npg_FcAUEC4QL8hy
+      
+      # JWT Configuration
+      - key: JWT_SECRET
+        generateValue: true
+        
+      # CORS Configuration
+      - key: FRONTEND_URL
+        value: https://your-frontend-domain.onrender.com
+        
+      # Email Configuration
+      - key: MAIL_USERNAME
+        value: aurora.flames01@gmail.com
+      - key: MAIL_PASSWORD
+        value: izlt otws odps lgfd
+        
+      # Business Configuration
+      - key: BUSINESS_EMAIL
+        value: aurora.flames01@gmail.com
+      - key: ADMIN_EMAIL
+        value: aurora.flames01@gmail.com
+        
+      # Razorpay (add your keys in Render dashboard)
+      - key: RAZORPAY_KEY_ID
+        value: rzp_test_YOUR_KEY_HERE
+      - key: RAZORPAY_KEY_SECRET
+        value: YOUR_SECRET_HERE
+      - key: RAZORPAY_WEBHOOK_SECRET
+        value: YOUR_WEBHOOK_SECRET
+        
+      # OAuth2 (add your keys in Render dashboard)
+      - key: GOOGLE_CLIENT_ID
+        value: YOUR_GOOGLE_CLIENT_ID
+      - key: GOOGLE_CLIENT_SECRET
+        value: YOUR_GOOGLE_CLIENT_SECRET
+      - key: FACEBOOK_CLIENT_ID
+        value: YOUR_FACEBOOK_CLIENT_ID
+      - key: FACEBOOK_CLIENT_SECRET
+        value: YOUR_FACEBOOK_CLIENT_SECRET
+
+  # PostgreSQL Database (if you want to use Render's PostgreSQL instead of Neon)
+  # - type: psqldb
+  #   name: aurora-flames-db
+  #   plan: free
+  #   databaseName: auroraflames
+  #   user: postgres
