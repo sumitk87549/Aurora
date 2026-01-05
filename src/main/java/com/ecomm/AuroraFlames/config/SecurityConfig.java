@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/candles/**").permitAll()
+                        .requestMatchers("/api/hello", "/api/test", "/api/status").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/uploads/**").permitAll()
                         // Allow all static resources (JS, CSS, images, etc.)
