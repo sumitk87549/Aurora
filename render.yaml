@@ -24,7 +24,7 @@ services:
         
       # CORS Configuration
       - key: FRONTEND_URL
-        value: https://your-frontend-domain.onrender.com
+        value: https://auroraflames.vercel.app
         
       # Email Configuration
       - key: MAIL_USERNAME
