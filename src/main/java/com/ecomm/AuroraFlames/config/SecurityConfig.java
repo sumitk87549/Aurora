@@ -71,6 +71,20 @@ public class SecurityConfig {
         configuration.addExposedHeader("Authorization");
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:4200", // Local dev
+                "https://auroraflames-5dc990ta1-prachi-ajaniyas-projects.vercel.app", // Vercel
+                "https://*.vercel.app", // All Vercel deployments
+                "https://beats-instead-cottage-charlotte.trycloudflare.com",
+                "https://becomes-instead-cottage-charlotte.trycloudflare.com"// Your LocalTunnel URL
+        ));
+
+        configuration.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
