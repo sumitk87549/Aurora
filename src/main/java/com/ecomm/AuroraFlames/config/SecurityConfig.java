@@ -68,24 +68,14 @@ public class SecurityConfig {
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                // Allow all origins for ngrok access
-                configuration.addAllowedOriginPattern("*");
-                configuration.addAllowedMethod("*");
-                configuration.addAllowedHeader("*");
-                configuration.addExposedHeader("Authorization");
-                configuration.setAllowCredentials(true);
-                configuration.setMaxAge(3600L);
-                configuration.setAllowedOrigins(Arrays.asList(
-                                "http://localhost:4200", // Local dev
-                                "https://auroraflames-5dc990ta1-prachi-ajaniyas-projects.vercel.app", // Vercel
-                                "https://*.vercel.app", // All Vercel deployments
-                                "https://grams-facing-meanwhile-mother.trycloudflare.com"
+                configuration.setAllowedOriginPatterns(Arrays.asList(
+                                "http://localhost:4200",
+                                "https://auroraflames.vercel.app",
+                                "https://*.trycloudflare.com"
                 ));
-
-                configuration.setAllowedMethods(Arrays.asList(
-                                "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
                 configuration.setAllowedHeaders(Arrays.asList("*"));
+                configuration.addExposedHeader("Authorization");
                 configuration.setAllowCredentials(true);
                 configuration.setMaxAge(3600L);
 
