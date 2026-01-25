@@ -79,8 +79,7 @@ public class SecurityConfig {
                                 "http://localhost:4200", // Local dev
                                 "https://auroraflames-5dc990ta1-prachi-ajaniyas-projects.vercel.app", // Vercel
                                 "https://*.vercel.app", // All Vercel deployments
-                                "https://beats-instead-cottage-charlotte.trycloudflare.com",
-                                "https://demanding-warranty-must-true.trycloudflare.com"// Your LocalTunnel URL
+                                "https://grams-facing-meanwhile-mother.trycloudflare.com"
                 ));
 
                 configuration.setAllowedMethods(Arrays.asList(
